@@ -1,0 +1,46 @@
+{% extends '_base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}GOODSTRACKER{% endblock %}
+{% block header_text %} Chat {% endblock %}
+
+{% block content %}
+
+    <div>
+        <p class="h2">Envios:</p>
+
+        <form class="form-inline" id="join" method="POST" action='#'>
+            <input type="text"    class="form-control mr-1" name="join_room" id="room_name" placeholder="Sala">
+            <button type="button" class="btn btn-secondary btn-md mr-1" value="join-room"  id="bt_join_room">Entrar</button>
+            <button type="button" class="btn btn-secondary btn-md mr-1" value="leave-room" id="bt_leave-room">Sair</button>
+            <button type="button" class="btn btn-secondary btn-md mr-1" value="close-room" id="bt_close-room">Fechar</button>
+        </form>
+        <br>
+        <form class="form-inline" id="send_room" method="POST" action='#'>
+            <input type="text" class="form-control mr-1" name="room_name" id="room_name" placeholder="Sala">
+            <input type="text" class="form-control mr-1" name="chat_msg" id="chat_msg" placeholder="Menssagem">
+            <button type="button" class="btn btn-secondary btn-md mr-1" value="echo" >Echo</button>
+            <button type="button" class="btn btn-secondary btn-md mr-1" value="to-room" >Enviar para a sala</button>
+            <button type="button" class="btn btn-secondary btn-md mr-1" value="to-all" >Enviar para todos</button>
+        </form>
+        <br>
+        <form class="form-inline" id="disconnect" method="POST" action="#">
+            <button type="submit" class="btn btn-primary">Desconectar</button>
+        </form>
+        </div>
+
+        <h2>Recepcao:</h2>
+
+    <div id="log" style="width:100%; height: 300px; overflow: auto;"></div>
+ 
+
+{% endblock %}
+
+{% block script %}
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+    <script src="{% static 'chat.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends '_base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}GOODSTRACKER{% endblock title %}
+{% block header_text %} Monitor {% endblock header_text %}
+
+{% block content %}
+
+    <div class="container-fluid">
+
+        <p class="h2">Info:</p>
+        <p>Modo assincrono e: <b>{{ async_mode }}</b></p>
+        <p>Tempo medio de latencia (ping/pong): <b><span id="ping-pong"></span>ms</b></p>
+        <p class="h2" id="tlm_title">Dados telemetria</p>
+        <p>Tempearatura da CPU: <b><span id="temperatura"></span> [°C]</b></p>
+        <p>CPU: <b><span id="cpu"></span> [%]</b></p>
+        <p>Memoria: <b><span id="memoria"></span> [MB]</b></p>
+        <p>Disco: <b><span id="disco"></span> [GB]</b></p>
+        <p>Humidade: <b><span id="humidade"></span> [%]</b></p>
+        <p>Pressao: <b><span id="pressao"></span> [mbar]</b></p> 
+
+
+        <div id="log" style="width:100%; height: 300px; overflow: auto;">
+            
+            <h2>Recepcao:</h2>
+            
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block script %}
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+    <script src="{% static 'monitor.js' %}"></script>
+
+{% endblock %}

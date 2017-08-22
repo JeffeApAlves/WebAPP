@@ -1,0 +1,29 @@
+{% extends '_base.html' %}
+
+{% block title %}GOODSTRACKER{% endblock title %}
+{% block header_text %} Usuarios {% endblock header_text %}
+
+{% block content %}
+  <div class="container-fluid">
+    <br>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr data-username="{{ user.username|escape }}">
+            <th scope="row">1</th>
+            <td>{{ user.username|escape }}</td>
+            <td>{{ user.status|default:'Offline' }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>  
+{% endblock content %}

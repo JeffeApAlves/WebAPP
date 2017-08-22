@@ -1,0 +1,109 @@
+    <script>
+
+        $(document).ready(function() {
+
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var socket = new WebSocket(ws_scheme + '://' + window.location.host + '/chat/stream/');
+            
+            socket.onmessage = function(e) {
+                alert(e.data);
+            }
+
+            socket.onopen = function() {
+                socket.send({data: 'Conectado!'});
+                console.log('Conectado chat socket.');
+            }
+
+            socket.onclose = function () {
+                console.log("Desconectado chat socket");
+            }
+
+            socket.onmessage = function message(event) {
+                var data = JSON.parse(event.data);
+                // NOTE: We escape JavaScript to prevent XSS attacks.
+                var username = encodeURI(data['username']);
+                var user = $('li').filter(function () {
+                return $(this).data('username') == username;
+            });
+
+
+            // Call onopen directly if socket is already open
+            if (socket.readyState == WebSocket.OPEN) socket.onopen();
+
+            // Evento para tratar novas conexoes.
+            // A callback sera invocada quando a conexao estabilizou com o server
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'Conectado!'});
+            });
+
+            // Evento pra tratar o envio de dados feito pelo servidor.
+            // A callback sera invocada sempre que o server enviar dados para o client
+            // Os dados serao mostrados na sessao Recepcao
+            socket.on('my_response', function(msg) {
+                $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+            });
+
+ 
+            // Envia mensagem
+            $('form#emit').on('submit', function(event) {
+                var message = {
+                    data: $('#emit_data').val(),
+                }
+                socket.send(JSON.stringify(message));
+                return false;
+            });
+
+            $('form#broadcast').on('submit', function(event) {
+                var message = {
+                    data: $('#emit_data').val(),
+                }
+                socket.send(JSON.stringify(message));
+                return false;
+            });
+
+            $('form#join').on('submit', function(event) {
+                var message = {
+                    room: $('#join_room').val(),
+                    leave: 'YES',
+                }
+                socket.send(JSON.stringify(message));
+                return false;
+            });
+
+            $('form#leave').on('submit', function(event) {
+                var message = {
+                    room: $('#leave_room').val(),
+                    leave: 'YES',
+                }
+                socket.send(JSON.stringify(message));
+                return false;
+            });
+
+            $('form#send_room').on('submit', function(event) {
+                var message = {
+                    room: $('#room_name').val(),
+                    data: $('#room_data').val(),
+                }
+                socket.send(JSON.stringify(message));
+                return false;
+            });
+
+            $('form#close').on('submit', function(event) {
+                var message = {
+                    room: $('#room_name').val(),
+                    close:'YES',
+                }
+                socket.send(JSON.stringify(message));
+                return false;
+            });
+
+            $('form#disconnect').on('submit'function(event) {
+                var message = {
+                    DISCONNECT:'YES',
+                }
+                socket.send(JSON.stringify(message));
+                return false;
+            });
+        });
+
+    </script>
