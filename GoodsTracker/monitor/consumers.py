@@ -17,7 +17,7 @@ def ws_connect(message):
     group.add(message.reply_channel)
     # Envia messangem Accept the connection request
     message.reply_channel.send({"accept": True})
-    print("accept Monitor")
+    print("accept-Monitor")
  
 # Conectado em um websocket
 @channel_session
