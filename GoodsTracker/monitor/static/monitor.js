@@ -56,6 +56,8 @@ $(document).ready(function () {
     // Os dados serao mostrados na sessao Recepcao
     function handle_tlm(data) {
  
+        count++;
+
         tlm = data.telemetry
 
         $('#temperatura').text(tlm.temperature);
@@ -64,7 +66,7 @@ $(document).ready(function () {
         $('#memoria').text(tlm.memory);
         $('#disco').text(tlm.disk);
         $('#pressao').text(tlm.pressure);
-        $('#tlm_title').text('Dados Telemetria # (' + tlm.count + ' )');
+        $('#tlm_title').text('Dados Telemetria # ' + count);
     }
 
     // Funcao finaliza o teste de latencia
@@ -89,16 +91,14 @@ $(document).ready(function () {
         socket.send(JSON.stringify({
         
             "command": "ping", 
-        
         }));
-    }, 1000);
+    }, 2000);
 
     window.setInterval(function() {
 
         socket.send(JSON.stringify({
         
             "command":"update_monitor", 
-        
         }));
 
     }, 1000);
