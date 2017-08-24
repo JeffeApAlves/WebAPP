@@ -22,8 +22,10 @@ $(document).ready(function () {
     // Hook para processa menssagem recebidoas pelo server
     socket.onmessage = function (message) {
 
-        $('#log').append('<li class="list-group-item">' + message.data + '</li>');
+        //$('#log').append('<li class="list-group-item">' + message.data + '</li>');
         
+        $('#log').append('<p class="list-group-item">' + message.data + '</p>');
+
         // Debug
         console.log("Got websocket message " + message.data);
    
@@ -66,7 +68,7 @@ $(document).ready(function () {
         $('#memoria').text(tlm.memory);
         $('#disco').text(tlm.disk);
         $('#pressao').text(tlm.pressure);
-        $('#tlm_title').text('Telemetria RB3 # ' + count);
+        $('#header_text').text('Telemetria RB3 # ' + count);
     }
 
     // Funcao de retorno para o teste de latencia

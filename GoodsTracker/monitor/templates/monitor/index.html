@@ -1,10 +1,9 @@
 {% extends '_base.html' %}
 {% load staticfiles %}
-{% block header_text %} Monitor {% endblock header_text %}
+{% block header_text %} Telemetria RB3 # {% endblock header_text %}
 
 {% block content %}
     <div>
-        <p class="h3" id="tlm_title">Telemetria RB3 </p>
         <table class="table table-striped table-bordered"style="width:50%">
             <thead>
                 <tr>
@@ -60,9 +59,8 @@
            </tbody>
         </table>
     </div>
-    <div>
-        <p class="h3">Recepção</p>
-        <ul class="list-group" id="log" style="height: 250px; overflow: auto;"></ul>
+    <div id="log" class="list-group" style="height: 250px; overflow: auto;">
+        <b class="list-group-item disabled">Recepção</b>
     </div>
 
 {% endblock %}
