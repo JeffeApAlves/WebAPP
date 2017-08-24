@@ -1,11 +1,11 @@
 $(document).ready(function () {
   
-    // Correctly decide between ws:// and wss://
+    // Decide entre ws:// and wss://
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
     var ws_path = ws_scheme + '://' + window.location.host + "/monitor/stream/";
-    console.log("Connecting to " + ws_path);
+    console.log("Conecatando em " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
-    var count = 0
+    var count  = 0
     
     // Debug
     socket.onopen = function () {
@@ -19,7 +19,7 @@ $(document).ready(function () {
         console.log("Desconectado do websocket monitor");
     };
 
-    // Hook para processa menssagem
+    // Hook para processa menssagem recebidoas pelo server
     socket.onmessage = function (message) {
 
         $('#log').append('<li class="list-group-item">' + message.data + '</li>');
@@ -47,7 +47,7 @@ $(document).ready(function () {
     
         } else {
 
-            console.log("Cannot handle message!");
+            console.log("Ops !!! Não foi possivel manusear a mensagem enviada pelor servidor !");
         }
     };
 
@@ -66,12 +66,13 @@ $(document).ready(function () {
         $('#memoria').text(tlm.memory);
         $('#disco').text(tlm.disk);
         $('#pressao').text(tlm.pressure);
-        $('#tlm_title').text('Dados Telemetria # ' + count);
+        $('#tlm_title').text('Telemetria RB3 # ' + count);
     }
 
-    // Funcao finaliza o teste de latencia
-    // A funcao sera invocada quando o server enviar o pong. O cronometro e parado e 
-    // o resultado registrado em uma lista para o calculo da media dos ultimos valores
+    // Funcao de retorno para o teste de latencia
+    // Essa funcao sera invocada quando o server enviar o pong como command. 
+    // O delta de tempo e computado e o resultado registrado em uma lista 
+    // para o calculo da media dos 10 ultimos valores
     function handle_pingpong(data) {
 
         var latency = (new Date).getTime() - start_time;
@@ -94,6 +95,7 @@ $(document).ready(function () {
         }));
     }, 2000);
 
+    // Requisita periodicamente( a cada 2s) os dados de telemetria
     window.setInterval(function() {
 
         socket.send(JSON.stringify({
@@ -101,5 +103,5 @@ $(document).ready(function () {
             "command":"update_monitor", 
         }));
 
-    }, 1000);
+    }, 2000);
 });

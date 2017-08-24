@@ -24,6 +24,7 @@ def ws_connect(message):
 @channel_session
 def ws_disconnect(message):
     Group("monitors").discard(message.reply_channel)
+    tlm.stop()
 
 def ws_receive(message):
     payload = json.loads(message['text'])
