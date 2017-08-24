@@ -1,36 +1,80 @@
 {% extends '_base.html' %}
-
 {% load staticfiles %}
-
 {% block title %}GOODSTRACKER{% endblock title %}
 {% block header_text %} Monitor {% endblock header_text %}
 
 {% block content %}
 
-    <div class="container-fluid">
-
-        <p class="h2">Info:</p>
-        <p>Modo assincrono e: <b>{{ async_mode }}</b></p>
-        <p>Tempo medio de latencia (ping/pong): <b><span id="ping-pong"></span>ms</b></p>
+    <div>
         <p class="h2" id="tlm_title">Dados telemetria</p>
-        <p>Tempearatura da CPU: <b><span id="temperatura"></span> [°C]</b></p>
-        <p>CPU: <b><span id="cpu"></span> [%]</b></p>
-        <p>Memoria: <b><span id="memoria"></span> [MB]</b></p>
-        <p>Disco: <b><span id="disco"></span> [GB]</b></p>
-        <p>Humidade: <b><span id="humidade"></span> [%]</b></p>
-        <p>Pressao: <b><span id="pressao"></span> [mbar]</b></p> 
 
-
-        <div id="log" style="width:100%; height: 300px; overflow: auto;">
-            
-            <h2>Recepcao:</h2>
-            
-        </div>
-
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Descrição</th>
+                    <th>Unidade</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Modo assincrono</td>
+                    <td>[]</td>
+                    <td><b>{{ async_mode }}</b></td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Tempo medio de latencia</td>
+                    <td>[ms]</td>
+                    <td><b><span id="ping-pong"></span></b></td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td>Tempearatura da CPU</td>
+                    <td>[Celsus]</td>
+                    <td><b><span id="temperatura"></span></b></td>
+                </tr>
+                <tr>
+                    <th scope="row">4</th>
+                    <td>CPU</td>
+                    <td>[%]</td>
+                    <td><b><span id="cpu"></span></b></td>
+                </tr>
+                <tr>
+                    <th scope="row">5</th>
+                    <td>Memória</td>
+                    <td>[MB]</td>
+                    <td><b><span id="memoria"></span></b></td>
+                </tr>
+                <tr>
+                    <th scope="row">6</th>
+                    <td>Disco</td>
+                    <td>[GB]</td>
+                    <td><b><span id="disco"></span></b></td>
+                </tr>
+                <tr>
+                    <th scope="row">7</th>
+                    <td>Humidade</td>
+                    <td>[%]</td>
+                    <td><b><span id="humidade"></span></b></td>
+                </tr>
+                <tr>
+                    <th scope="row">8</th>
+                    <td>Pressão</td>
+                    <td>[mbar]</td>
+                    <td><b><span id="pressao"></span></b></td>
+                </tr>
+           </tbody>
+        </table>
+    </div>
+    <div>
+        <h2>Recepção:</h2>
+        <ul class="list-group" id="log" style="width:100%; height: 300px; overflow: auto;"></ul>
     </div>
 
 {% endblock %}
-
 
 {% block script %}
 

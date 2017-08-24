@@ -18,7 +18,6 @@ $(document).ready(function () {
 
     // Processa menssagem
     socket.onmessage = function (message) {
-        
         // Debug
         console.log("Got websocket message " + message.data);
    
@@ -50,31 +49,24 @@ $(document).ready(function () {
         }
     };
 
-
     function handle_join(data) {
 
         console.log("Joining room " + data.join);
-        $('#log').append('<p>Participando do grupo ' + data.join + '</p>');
+        //$('#log').append('<p>Participando do grupo ' + data.join + '</p>');
+        $('#log').append('<li class="list-group-item">Entrou do grupo: ' + data.join + '</li>');
     }
 
     function handle_leave(data) {
 
         console.log("Leaving room " + data.leave);
-        $('#log').append('<p>Saiu do grupo ' + data.leave + '</p>');
-        $("#room-" + data.leave).remove();
+        $('#log').append('<li class="list-group-item">Saiu do grupo: ' + data.leave + '</li>');
     }
 
     function handle_message(data) {
 
-        payload = data.message;
-        $('#log').append('<p>Recebido: ' + payload.chat_msg + '</p>');
+        console.log("Receive message: " + data.message);
+        $('#log').append('<li class="list-group-item">Mensagem recebida: ' + data.message.chat_msg + '</li>');
     }
-
-    // Says if we joined a room or not by if there's a div for it
-    function inRoom(roomId) {
-        return $("#room-" + roomId).length > 0;
-    };
-
 
     $("form#join button").click(function(ev){
 
@@ -102,22 +94,20 @@ $(document).ready(function () {
             
         } else if($(this).attr("value")=="close-room"){
 
-
             socket.send(JSON.stringify({
             
-                "room": room_name,
                 "command": "close_room", 
+                "room": room_name,
             
             }));
-
         }
 
-        $("form#join").submit();
+//        $("form#join").submit();
 
         return false;
     });
 
-   $("form#send_room button").click(function(ev){
+   $("form#send button").click(function(ev){
         
         ev.preventDefault()// cancel form submission
         
@@ -133,9 +123,8 @@ $(document).ready(function () {
                 "chat_msg": chat_msg, 
             
             }));
-
  
-        } else if($(this).attr("value")=="to_room"){
+        } else if($(this).attr("value")=="to-room"){
 
             socket.send(JSON.stringify({
             
@@ -143,9 +132,8 @@ $(document).ready(function () {
                 "command": "send_room",
                 "chat_msg": chat_msg
             }));
-
             
-        }else if($(this).attr("value")=="to_all"){
+        }else if($(this).attr("value")=="to-all"){
 
             socket.send(JSON.stringify({
             
@@ -154,10 +142,9 @@ $(document).ready(function () {
                 "chat_msg": chat_msg, 
             
             }));
-
         }
 
-        $("form#join").submit();
+//        $("form#send").submit();
 
         return false;
     });
@@ -179,6 +166,7 @@ $(document).ready(function () {
   
     $('form#join').submit(function(event) {
 
+        //Debug
         console.log("submit")
         return false;
     });

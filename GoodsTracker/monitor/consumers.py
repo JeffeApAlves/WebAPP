@@ -18,6 +18,7 @@ def ws_connect(message):
     # Envia messangem Accept the connection request
     message.reply_channel.send({"accept": True})
     print("accept-Monitor")
+    tlm.start()
  
 # Conectado em um websocket
 @channel_session

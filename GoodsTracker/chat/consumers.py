@@ -37,13 +37,11 @@ def chat_join(message):
     room_name = message["room"]
     # Salva a sala na sessao e adiona o canal na sala
     message.channel_session['room'] = room_name
-
     payload = json.dumps({
                 "join": room_name,
                 "title": room_name})
     
     message.reply_channel.send({"text":payload})
-
     Group("chat-%s" % room_name).add(message.reply_channel)
     #Debug
     print("Entrou do grupo chat-%s channel:%s" % (room_name,message.reply_channel))
@@ -67,9 +65,7 @@ def chat_leave(message):
 def chat_send_echo(message):
     payload = json.dumps({
                 "message": message.content})
-
     message.reply_channel.send({"text": payload})
-
     #Debug
     print("Echo %s" % payload)
 
@@ -77,7 +73,9 @@ def chat_send_echo(message):
 @channel_session
 def chat_send_room(message):
     group = message["room"]
-    group.send(message["chat_msg"])
+    payload = json.dumps({
+                "message":message["chat_msg"]})
+    group.send({"text": payload})
     print(message['chat_msg'])
 
 @channel_session_user

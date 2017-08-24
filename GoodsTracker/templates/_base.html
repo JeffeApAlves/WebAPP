@@ -1,36 +1,30 @@
 {% load staticfiles %}
 
 <!doctype html>
-<html lang="pt-br">
+<html lang="en">
 
-<head>
-  <title>{% block title %}{% endblock %}</title>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel='stylesheet'/>
-  <link href="{% static 'css/dashboard.css' %}" rel='stylesheet' />
-  <link href="{% static 'css/simple-sidebar.css' %}" rel="stylesheet">
-  
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel='stylesheet'/>
+    <link href="{% static 'css/dashboard.css' %}" rel='stylesheet' />
+    <link href="{% static 'css/simple-sidebar.css' %}" rel="stylesheet">
 
-  {% block extra_head %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+  </head>
 
-
-</head>
-<body>
-
-  <header>
-    <div>
+  <body>
+    <header>
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <a class="navbar-brand" href="#">GoodsTracker</a>
         <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
         </button>
-
 
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
           <ul class="navbar-nav mr-auto">
@@ -56,12 +50,10 @@
           </form>
         </div>
       </nav>
-    </div>
   </header>
 
   <section>
     <div id="wrapper" class="toggled">
-
       <!-- Sidebar -->
       <div id="sidebar-wrapper">
           <ul class="sidebar-nav">
@@ -96,15 +88,11 @@
       <!-- /#sidebar-wrapper -->
 
       <!-- Page Content Make sure to keep all page content within the <code>#page-content-wrapper</code>. -->
-      <div id="page-content-wrapper">
+      <div class="container-fluid" id="page-content-wrapper">
 
-          <div class="container-fluid">
-
-            <div> <p class="h1">{% block header_text %}{% endblock header_text %}</p> </div>
-
-            {% block content %}{% endblock %}
-
-          </div>
+          <p class="h1">{% block header_text %}{% endblock header_text %}</p> 
+          
+          {% block content %}{% endblock %}
       </div>
       <!-- /#page-content-wrapper -->
 
@@ -120,12 +108,10 @@
   
   <!-- Menu Toggle Script -->
   <script>
-
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
     });
-  
   </script>
 
   {% block script %}{% endblock %}

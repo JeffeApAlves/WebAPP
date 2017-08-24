@@ -5,7 +5,8 @@ $(document).ready(function () {
     var ws_path = ws_scheme + '://' + window.location.host + "/monitor/stream/";
     console.log("Connecting to " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
-
+    var count = 0
+    
     // Debug
     socket.onopen = function () {
 
@@ -18,13 +19,11 @@ $(document).ready(function () {
         console.log("Desconectado do websocket monitor");
     };
 
- 
-    var count = 0
     // Hook para processa menssagem
     socket.onmessage = function (message) {
 
-        $('#log').append('<br>' + $('<div/>').text('Received #' + count++ + ': ' + message.data).html());
-
+        $('#log').append('<li class="list-group-item">' + message.data + '</li>');
+        
         // Debug
         console.log("Got websocket message " + message.data);
    
@@ -103,6 +102,4 @@ $(document).ready(function () {
         }));
 
     }, 1000);
-
-
 });

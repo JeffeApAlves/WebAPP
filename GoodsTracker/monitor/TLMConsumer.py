@@ -5,6 +5,8 @@ from .ThingSpeak import ThingSpeak
 from ast import literal_eval
 import os
 import json
+from threading import Thread
+import time
 
 #ThingSpeak
 # ID do canal do ThingSpeak
@@ -24,10 +26,10 @@ VALUE_HUMIDITY = 'field6'
 #Porta 
 tPort = 80
 
-class TLMConsumer (object):
+class TLMConsumer (Thread):
 
     def __init__(self):
-
+        Thread.__init__(self)
         self.count = 0
         self.temperature = 0
         self.cpu = 0
@@ -65,7 +67,6 @@ class TLMConsumer (object):
         self.values = self.ts.readChannel(channel=TLM_CHANNEL_ID,key=TLM_READ_API_KEY)
 
         return {
-
             'temperature':  self.values[VALUE_TEMPERATURE] ,
             'humidity':  self.values[VALUE_HUMIDITY] ,
             'memory': self.values[VALUE_MEMORY],
@@ -77,3 +78,7 @@ class TLMConsumer (object):
     def loop_start(self):
         pass
 #        self.client.loop_start()
+
+    def run(self):
+        self.values = self.ts.readChannel(channel=TLM_CHANNEL_ID,key=TLM_READ_API_KEY)
+        time.sleep(5)
