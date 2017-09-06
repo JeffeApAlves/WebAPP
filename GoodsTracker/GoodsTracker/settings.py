@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'personal',
     'channels',
+    'waypoints.apps.WaypointsConfig',
     'user.apps.UserConfig',
     'service.apps.ServiceConfig',
     'history.apps.HistoryConfig',
@@ -85,10 +86,20 @@ WSGI_APPLICATION = 'GoodsTracker.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
+ 
+    #'default': {
+    #    'ENGINE': 'django.db.backends.sqlite3',
+    #    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    #}
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'HOST' : 'localhost',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'geodatabase',
+        'USER': 'geouser',
+        'PASSWORD': 'geopassword',
     }
+
 }
 
 
@@ -142,3 +153,5 @@ STATIC_URL = '/static/'
 LOGOUT_REDIRECT_URL = '/'
 
 LOGIN_REDIRECT_URL = "/home/log_in/"
+
+GOOGLE_API_KEY = 'AIzaSyCn1WH3o6v8rDP5kF9kYYeEXHDBtStoqwg'
