@@ -1,11 +1,7 @@
-var map, marker, waypointByID = {};
-var currentObject;
-var map;
-var geocoder;
-
 $(document).ready(function () {
     
     function searchWaypoints() {
+
         geocoder.geocode({
             'address': $('#address').val()
         }, function(results, status) {
@@ -32,7 +28,7 @@ $(document).ready(function () {
     $('#address').keydown(function(e) {
         if (e.keyCode == 13) searchWaypoints();
     });
-
+    
     function activateWaypoints() {
         // Add waypoint click handler
         $('.waypoint').each(function () {
@@ -77,19 +73,22 @@ $(document).ready(function () {
     });
     activateWaypoints();
 });
-
 /*
-function initialize() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 5,
-        center: new google.maps.LatLng(41.879535, -87.624333),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
-    geocoder = new google.maps.Geocoder();
-}*/
-
+function loadPoints() {
+    
+    console.log("waypoints value")
+    console.log( $('waypoints').val())
+    for(waypoint in $('waypoints').val()){
+        waypointByID[waypoint.id] = {
+            "name": waypoint.name,
+            "lat": waypoint.geometry.y,
+            "lng": waypoint.geometry.x,
+        };
+    }
+}    
+*/
 function initMap() {
-    var map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById('map'), {
       //center: {lat: -34.397, lng: 150.644},
       center: new google.maps.LatLng(41.879535, -87.624333),
       mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -119,6 +118,8 @@ function initMap() {
       handleLocationError(false, infoWindow, map.getCenter());
     }
 */
+
+//    loadPoints();
 }
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {

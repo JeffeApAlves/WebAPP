@@ -1,2 +1,76 @@
 {% extends '_base.html' %}
-{% block header_text %} Rota {% endblock header_text %}
+{% load staticfiles %}
+
+{% block extra_head %}
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel='stylesheet' type="text/css" href="{% static 'route/route.css' %}" />
+          
+{% endblock %}
+
+{% block content %}
+
+    <div id = 'container_route' class = "container_route" >
+
+        <div id = 'item-tlm' class="tlm">
+            <input type="submit" id="submit" class="btn btn-secondary btn-md mr-1">
+            <H4>Origem</h4>
+            <form  id = 'form_start_route' method="post" action="#">
+
+                <div class="form-group">
+                    <label for="start_lat">Latitude</label>
+                    <input class="form-control" id="start_lat" placeholder="Latitude">
+                </div>
+
+                <div class="form-group">
+                    <label for="start_lng">Longitude</label>
+                    <input class="form-control" id="start_lng" placeholder="Longitude">
+                </div>
+
+                <div class="form-group">
+                    <label for="start_address">Example textarea</label>
+                    <textarea class="form-control" id="start_address" rows="3"></textarea>
+                </div>
+    
+            </form>
+
+            <H4>Destino</h4>
+            <form  id = 'form_end_route' method="post" action="#">
+                
+                <div class="form-group">
+                    <label for="end_lat">Latitude</label>
+                    <input class="form-control" id="end_lat" placeholder="Latitude">
+                </div>
+
+                <div class="form-group">
+                    <label for="end_lng">Longitude</label>
+                    <input class="form-control" id="end_lng" placeholder="Longitude">
+                </div>
+
+                <div class="form-group">
+                    <label for="end_address">Endereço</label>
+                    <textarea class="form-control" id="end_address" rows="3"></textarea>
+                </div>
+                
+            </form>
+        </div>
+        <div id = "item-map" class = "map">
+            <div id="map"></div>
+            <div id="directions-panel"></div>
+        </div>
+    </div>
+
+    <div id=waypoints>
+        {{content}}
+    </div>
+{% endblock %}
+
+{% block script %}
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn1WH3o6v8rDP5kF9kYYeEXHDBtStoqwg&callback=initMap">
+    </script>
+
+    <script src="{% static 'route/route.js' %}"></script>
+
+{% endblock %}

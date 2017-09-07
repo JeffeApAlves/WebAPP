@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
+    'geoposition',
     'personal',
     'channels',
     'waypoints.apps.WaypointsConfig',
@@ -154,4 +156,9 @@ LOGOUT_REDIRECT_URL = '/'
 
 LOGIN_REDIRECT_URL = "/home/log_in/"
 
-GOOGLE_API_KEY = 'AIzaSyCn1WH3o6v8rDP5kF9kYYeEXHDBtStoqwg'
+GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyCn1WH3o6v8rDP5kF9kYYeEXHDBtStoqwg'
+
+GEOPOSITION_MAP_OPTIONS = {
+    'minZoom': 15,
+    'maxZoom': 18,
+}
