@@ -3,7 +3,7 @@
 {% block header_text %} Registro {% endblock header_text %}
 
 {% block extra_head %}
-  <link href="signin.css" rel="stylesheet">
+  <link href="{% static 'signin.css' %}" rel = 'stylesheet'/>
 {% endblock extra_head %}
 
 {% block content %}
@@ -21,5 +21,3 @@
 </form>
 
 {% endblock content %}
-
-

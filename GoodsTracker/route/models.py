@@ -16,3 +16,17 @@ class Endereco(models.Model):
 
     def __unicode__(self):
         return u"%s" % self.rua 
+
+
+class Rota(models.Model):
+
+    origem = Endereco()
+    destino = Endereco()
+
+
+    class Meta:
+        verbose_name, verbose_name_plural = u"Rota" , u"Rotas"
+
+
+    def __unicode__(self):
+        return u"%s to % s" % self.origem.rua,self.destino.rua

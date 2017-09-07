@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'geoposition',
     'personal',
     'channels',
+    'telemetry.apps.TelemetryConfig',
     'waypoints.apps.WaypointsConfig',
     'user.apps.UserConfig',
     'service.apps.ServiceConfig',

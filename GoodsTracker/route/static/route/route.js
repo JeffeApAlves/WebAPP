@@ -1,5 +1,7 @@
 var start_marker,end_marker;
 var directionsService, directionsDisplay;
+var geocoder;
+var infowindow;
 
 const STATUS_GUI = {
     INIT:0,
@@ -18,9 +20,7 @@ $(document).ready(function () {
 
     document.getElementById('submit').addEventListener('click', function() {
  
-        console.log("Periquita do bigode loiro")
         calculateAndDisplayRoute(directionsService, directionsDisplay);
-    
     });
 
      statusGUI = STATUS_GUI.EMPTY_ROUTE;
@@ -28,10 +28,9 @@ $(document).ready(function () {
 
 function initMap() {
 
-    directionsService = new google.maps.DirectionsService;
-    directionsDisplay = new google.maps.DirectionsRenderer;
-
-    const SENAI_ANCHIETA = new google.maps.LatLng(-23.591387, -46.645126);
+    directionsService       = new google.maps.DirectionsService;
+    directionsDisplay       = new google.maps.DirectionsRenderer;
+    const SENAI_ANCHIETA    = new google.maps.LatLng(-23.591387, -46.645126);
 
     var map = new google.maps.Map(document.getElementById('map'), {
         center: SENAI_ANCHIETA,
@@ -41,23 +40,26 @@ function initMap() {
 
     directionsDisplay.setMap(map);
 
-    var geocoder = new google.maps.Geocoder();
-    var infoWindow = new google.maps.InfoWindow({map: map});
+    geocoder    = new google.maps.Geocoder();
+    infoWindow  = new google.maps.InfoWindow({map: map});
 
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-        var pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        };
 
-        infoWindow.setPosition(pos);
-        infoWindow.setContent('Location found.');
-        map.setCenter(pos);
-    }, function() {
-        handleLocationError(true, infoWindow, map.getCenter());
-    });
+        navigator.geolocation.getCurrentPosition(function(position) {
+        
+            var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            map.setCenter(pos);
+
+        }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+        });
     } else {
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
@@ -65,9 +67,9 @@ function initMap() {
 
     var marker = new google.maps.Marker({
     
-        position: SENAI_ANCHIETA,
-        map: map,
-        title: 'Click to zoom'
+        position:   SENAI_ANCHIETA,
+        map:        map,
+        title:      ''
     });
 
     map.addListener('center_changed', function() {
@@ -75,12 +77,6 @@ function initMap() {
 //        window.setTimeout(function() {
 //          map.panTo(marker.getPosition());
 //        }, 2000);
-    });
-
-    marker.addListener('click', function() {
-        
-        map.setZoom(8);
-        map.setCenter(marker.getPosition());
     });
 
     google.maps.event.addListener(map, 'click', function(event) {
@@ -95,6 +91,11 @@ function initMap() {
             draggable: true,
         });
 
+        marker.addListener('click', function() {
+            
+            map.setCenter(marker.getPosition());
+        });
+    
         registerRoute(marker)
     });
 
@@ -103,21 +104,10 @@ function initMap() {
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
 
-    var waypts = [];
-    var checkboxArray = document.getElementById('waypoints');
-    for (var i = 0; i < checkboxArray.length; i++) {
-        if (checkboxArray.options[i].selected) {
-            waypts.push({
-                location: checkboxArray[i].value,
-                stopover: true
-            });
-        }
-    }
 
     directionsService.route({
         origin: start_marker.getPosition(),
         destination: end_marker.getPosition(),
-        waypoints: waypts,
         optimizeWaypoints: true,
         travelMode: 'DRIVING'
     }, function(response, status) {
@@ -144,9 +134,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
 
 function registerRoute(marker){
 
-    console.log(statusGUI)
-
-    
     if(statusGUI==STATUS_GUI.EMPTY_ROUTE){
 
         setStartPosition(marker);
@@ -161,12 +148,11 @@ function setStartPosition(marker){
 
     start_marker = marker;
 
-    console.log("Lat" + start_marker.position.lat())
-    console.log("Lng" + start_marker.position.lng())
-    
     $('#start_lat').val(start_marker.position.lat());
     $('#start_lng').val(start_marker.position.lng());
- 
+
+    geocodeLatLng(start_marker.position,'#start_address')
+
     statusGUI = STATUS_GUI.START_POINT_OK;
 }
 
@@ -176,7 +162,8 @@ function setEndPosition(marker){
 
     $('#end_lat').val(end_marker.position.lat());
     $('#end_lng').val(end_marker.position.lng());
-
+    geocodeLatLng(end_marker.position,'#end_address');
+    
     statusGUI = STATUS_GUI.END_POINT_OK;
 }
 
@@ -186,4 +173,26 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                                 'Ops! Não foi possivel obter a localização do navegador.' :
                                 'Error: Your browser doesn\'t support geolocation.');
 
+}
+
+function geocodeLatLng(position,info) {
+    
+    geocoder.geocode({'location': position}, function(results, status) {
+
+        if (status === 'OK') {
+
+            if (results[1]) {
+
+                address = results[1].formatted_address;
+
+                $(info).val(address);
+
+            } else {
+                window.alert('No results found');
+            }
+            
+        } else {
+            window.alert('Geocoder failed due to: ' + status);
+        }
+    });
 }
