@@ -32,16 +32,16 @@ $(document).ready(function () {
         
         if (data.join) {
 
-            handle_join(data)
+            handle_join(data);
 
         } else if (data.leave) {
 
-            handle_leave(data)
+            handle_leave(data);
 
     
         } else if (data.message) {
 
-            handle_message(data)
+            handle_message(data);
 
         } else {
 
@@ -70,9 +70,9 @@ $(document).ready(function () {
 
     $("form#join button").click(function(ev){
 
-        ev.preventDefault()// cancel form submission
+        ev.preventDefault();  // cancel form submission
         
-        var room_name  = $('#room_name').val()
+        var room_name  = $('#room_name').val();
 
         if($(this).attr("value")=="join-room"){
     
@@ -109,10 +109,10 @@ $(document).ready(function () {
 
    $("form#send button").click(function(ev){
         
-        ev.preventDefault()// cancel form submission
+        ev.preventDefault();    // cancel form submission
         
-        var room_name  = $('#room_name').val()
-        var chat_msg =  $('#chat_msg').val()
+        var room_name   = $('#room_name').val();
+        var chat_msg    =  $('#chat_msg').val();
 
         if($(this).attr("value")=="echo"){
 
@@ -152,7 +152,7 @@ $(document).ready(function () {
 
     $('form#disconnect').on('submit',function(event) {
 
-        var room_name  = $('#room_name').val()
+        var room_name  = $('#room_name').val();
 
         socket.send(JSON.stringify({
         
@@ -167,7 +167,7 @@ $(document).ready(function () {
     $('form#join').submit(function(event) {
 
         //Debug
-        console.log("submit")
+        console.log("submit");
         return false;
     });
 

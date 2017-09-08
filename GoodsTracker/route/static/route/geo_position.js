@@ -10,6 +10,6 @@ django.jQuery(document).ready(function($) {
       var e = $.Event("keydown");
       e.which = 50; // # Some key code value
       $(".geoposition-search input").trigger(e);
-     };
+     }
     });
    });

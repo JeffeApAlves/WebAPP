@@ -1,3 +1,7 @@
+var count  = 0;
+var ping_pong_times = [];
+
+
 $(document).ready(function () {
   
     // Decide entre ws:// and wss://
@@ -5,7 +9,6 @@ $(document).ready(function () {
     var ws_path = ws_scheme + '://' + window.location.host + "/monitor/stream/";
     console.log("Conecatando em " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
-    var count  = 0
     
     // Debug
     socket.onopen = function () {
@@ -41,11 +44,11 @@ $(document).ready(function () {
         
         if (data.telemetry) {
 
-            handle_tlm(data)
+            handle_tlm(data);
 
         } else if (data.pong) {
 
-            handle_pingpong(data)
+            handle_pingpong(data);
     
         } else {
 
@@ -53,57 +56,59 @@ $(document).ready(function () {
         }
     };
 
-    // Evento pra tratar o envio de dados feito pelo servidor.
-    // A callback sera invocada sempre que o server enviar dados para o client
-    // Os dados serao mostrados na sessao Recepcao
-    function handle_tlm(data) {
- 
-        count++;
-
-        tlm = data.telemetry
-
-        $('#temperatura').text(tlm.temperature);
-        $('#humidade').text(tlm.humidity);
-        $('#cpu').text(tlm.cpu);
-        $('#memoria').text(tlm.memory);
-        $('#disco').text(tlm.disk);
-        $('#pressao').text(tlm.pressure);
-        $('#header_text').text('Telemetria RB3 # ' + count);
-    }
-
-    // Funcao de retorno para o teste de latencia
-    // Essa funcao sera invocada quando o server enviar o pong como command. 
-    // O delta de tempo e computado e o resultado registrado em uma lista 
-    // para o calculo da media dos 10 ultimos valores
-    function handle_pingpong(data) {
-
-        var latency = (new Date).getTime() - start_time;
-        ping_pong_times.push(latency);
-        ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
-        var sum = 0;
-        for (var i = 0; i < ping_pong_times.length; i++)
-            sum += ping_pong_times[i];
-        $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
-    }
-
+    // Ping periodico (medição de latencia)
     // Funcao inicia o teste de latencia enviando o ping e zera o cronometro
-    var ping_pong_times = [];
-    var start_time;
     window.setInterval(function() {
-        start_time = (new Date).getTime();
+        start_time = (new Date()).getTime();
         socket.send(JSON.stringify({
         
             "command": "ping", 
         }));
     }, 2000);
-
+    
     // Requisita periodicamente( a cada 2s) os dados de telemetria
     window.setInterval(function() {
-
+    
         socket.send(JSON.stringify({
         
             "command":"update_monitor", 
         }));
-
+    
     }, 2000);
+    
 });
+
+// Evento pra tratar o envio de dados feito pelo servidor.
+// A callback sera invocada sempre que o server enviar dados para o client
+// Os dados serao mostrados na sessao Recepcao
+function handle_tlm(data) {
+    
+    count++;
+
+    tlm = data.telemetry;
+
+    $('#temperatura').text(tlm.temperature);
+    $('#humidade').text(tlm.humidity);
+    $('#cpu').text(tlm.cpu);
+    $('#memoria').text(tlm.memory);
+    $('#disco').text(tlm.disk);
+    $('#pressao').text(tlm.pressure);
+    $('#header_text').text('Telemetria RB3 # ' + count);
+}
+       
+// Funcao de retorno para o teste de latencia
+// Essa funcao sera invocada quando o server enviar o pong como command. 
+// O delta de tempo e computado e o resultado registrado em uma lista 
+// para o calculo da media dos 10 ultimos valores
+function handle_pingpong(data) {
+
+    var latency = (new Date()).getTime() - start_time;
+    ping_pong_times.push(latency);
+    ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
+    var sum = 0;
+    for (var i = 0; i < ping_pong_times.length; i++)
+        sum += ping_pong_times[i];
+    $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
+}
+       
+       
