@@ -1,11 +1,12 @@
 from __future__ import print_function
+import os
 import paho.mqtt.client as mqtt
 import time
-from .ThingSpeak import ThingSpeak
+from core.ThingSpeak.ThingSpeak import ThingSpeak
 from ast import literal_eval
-import os
 import json
-from threading import Thread
+#from threading import Thread
+import threading
 import time
 
 #ThingSpeak
@@ -13,7 +14,7 @@ import time
 TLM_CHANNEL_ID = "315831"
 # Chave de escrita da API para o canal
 TLM_READ_API_KEY = "TF63H3V6I2UWO954"
-#Host mqtt do ThigSpeak
+#Host mqtt do ThingSpeak
 mqttHost = "mqtt.thingspeak.com"
 
 VALUE_TEMPERATURE = 'field1'
@@ -26,10 +27,12 @@ VALUE_HUMIDITY = 'field6'
 #Porta 
 tPort = 80
 
-class TLMConsumer (Thread):
+class RBPI3 (threading.Thread):
 
     def __init__(self):
-        Thread.__init__(self)
+#        Thread.__init__(self)
+        super(RBPI3, self).__init__()
+        self._stop_event = threading.Event()
         self.count = 0
         self.temperature = 0
         self.cpu = 0
@@ -81,4 +84,11 @@ class TLMConsumer (Thread):
 
     def run(self):
         self.values = self.ts.readChannel(channel=TLM_CHANNEL_ID,key=TLM_READ_API_KEY)
+        print("Thread ativada")
         time.sleep(5)
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()

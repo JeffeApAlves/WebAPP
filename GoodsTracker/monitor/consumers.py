@@ -1,11 +1,13 @@
+import os
+import sys
 import json
 from channels import Channel, Group
 from channels.sessions import channel_session, enforce_ordering
 from channels.auth import channel_session_user, channel_session_user_from_http,channel_session_user_from_http
 from channels.security.websockets import allowed_hosts_only
-from .TLMConsumer import TLMConsumer 
+from raspberryPI3.RBPI3 import RBPI3
 
-tlm = TLMConsumer()
+rbpi3 = RBPI3()
 
 # Permitir apenas os servidores listados no settings.py
 @allowed_hosts_only
@@ -18,13 +20,13 @@ def ws_connect(message):
     # Envia messangem Accept the connection request
     message.reply_channel.send({"accept": True})
     print("accept-Monitor")
-    tlm.start()
+    rbpi3.start()
  
 # Conectado em um websocket
 @channel_session
 def ws_disconnect(message):
     Group("monitors").discard(message.reply_channel)
-    tlm.stop()
+    rbpi3.stop()
 
 def ws_receive(message):
     payload = json.loads(message['text'])
@@ -43,7 +45,7 @@ def monitor_ping(message):
 @channel_session_user
 @channel_session
 def monitor_updateTLM(message):
-    payload = json.dumps({"telemetry":tlm.readTLMChannel()})
+    payload = json.dumps({"telemetry":rbpi3.readTLMChannel()})
     message.reply_channel.send({"text": payload})
     #Debug
     print("Enviado TLM:" + str(payload))
@@ -52,4 +54,3 @@ def monitor_updateTLM(message):
 @channel_session
 def monitor_disconnect(message):
     print(message)
-

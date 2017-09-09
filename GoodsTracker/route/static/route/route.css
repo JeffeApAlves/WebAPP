@@ -8,32 +8,42 @@
 }
 
 .container_route div {
-    /*height: 100%;
-    display: inline-block;*/
 
-    margin-right:10px;
-
+    margin-right:5px;
     -webkit-flex:1 1 auto;
     flex:1 1 auto;
 }
 
-.container_route div.tlm { 
-    width: 20%;
+.container_route div.column_1{
+    width: 25%;
+}
+
+.container_route div.column_2 { 
+    width: 75%;
+}
+
+#summary-directions { 
+    height: 10%;
+}
+
+#directions-panel { 
+    height: 85%;
     overflow: auto; 
 }
 
-.container_route div.map { 
-    width: 80%;
+#tlm { 
+    height: 20%;
+    overflow: auto; 
 }
 
-#directions-panel{
-    width: 100%; height: 10%;
-    overflow: auto;
-}
+#map{
 
-#map {
-    width: 100%; height: 90%;
+    width: 100%;
+    height: 80%;
     margin: 0;
     padding: 0;
 }
 
+.table-condensed div.table_coordenates{
+    font-size: smaller;
+}

@@ -1,7 +1,8 @@
-var start_marker,end_marker;
-var directionsService, directionsDisplay;
+var map;
+var socket;
+var directionsService;
+var directionsDisplay;
 var geocoder;
-var infowindow;
 
 const STATUS_GUI = {
     INIT:0,
@@ -21,7 +22,7 @@ $(document).ready(function () {
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
     var ws_path = ws_scheme + '://' + window.location.host + "/tracker/stream/";
     console.log("Conecatando em " + ws_path);
-    var socket = new ReconnectingWebSocket(ws_path);
+    socket = new ReconnectingWebSocket(ws_path);
  
     socket.onopen = function () {
 
@@ -52,6 +53,8 @@ $(document).ready(function () {
         
         if (data.telemetry) {
 
+            console.log("Chegou o blaster mega power");
+            
             handle_tlm(data);
 
         } else if (data.pong) {
@@ -70,10 +73,22 @@ $(document).ready(function () {
         calculateAndDisplayRoute(directionsService, directionsDisplay);
     });
 
+    // Intervalo de requisição periodico ( a cada 2s) dos dados de telemetria
+    window.setInterval(function() {
+    
+        console.log("Comando de requisição da telemetria enviado!");
+        
+        socket.send(JSON.stringify({
+        
+            "command":"update_tlm", 
+        }));
+    
+    }, 2000);
+
     statusGUI = STATUS_GUI.EMPTY_ROUTE;
 });
 
-// Funcao de retorno para o teste de latencia
+// Função de retorno para o teste de latencia
 // Essa funcao sera invocada quando o server enviar o pong como command. 
 // O delta de tempo e computado e o resultado registrado em uma lista 
 // para o calculo da media dos 10 ultimos valores
@@ -88,43 +103,50 @@ function handle_pingpong(data) {
     $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
 }
         
-// Evento pra tratar o envio de dados feito pelo servidor.
-// A callback sera invocada sempre que o server enviar dados para o client
-// Os dados serao mostrados na sessao Recepcao
+// Evento pra tratar o envio das informações de telemetria enviada pelo servidor.
+// Sera invocada sempre que o servidor enviar dados
 function handle_tlm(data) {
-    
-    count++;
 
-    tlm = data.telemetry;
+    var pos = {
+        lat: data.telemetry.lat,
+        lng: data.telemetry.lng,
+    };
 
-    $('#temperatura').text(tlm.temperature);
-    $('#humidade').text(tlm.humidity);
-    $('#cpu').text(tlm.cpu);
-    $('#memoria').text(tlm.memory);
-    $('#disco').text(tlm.disk);
-    $('#pressao').text(tlm.pressure);
-    $('#header_text').text('Telemetria RB3 # ' + count);
+    var marker = new google.maps.Marker({
+        
+            position:   pos,
+            map:        map,
+            title:      '',
+    });
 }
-       
 
+// Inicializa a entidade map (Google)
 function initMap() {
 
+    //Seviços de direncionamento
     directionsService       = new google.maps.DirectionsService();
+    
+    // Renderização ddos objetos visuais relacionado a direção
     directionsDisplay       = new google.maps.DirectionsRenderer();
+
+    //Geolocalização
+    geocoder                = new google.maps.Geocoder();
+    
+    //Coordenada SENAi Anchieta
     const SENAI_ANCHIETA    = new google.maps.LatLng(-23.591387, -46.645126);
 
-    var map = new google.maps.Map(document.getElementById('map'), {
+    //Entidade mapa
+    map = new google.maps.Map(document.getElementById('map'), {
         center: SENAI_ANCHIETA,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         zoom: 15
     });
-
+    
+    //Configura saídas da direção
     directionsDisplay.setMap(map);
+    directionsDisplay.setPanel(document.getElementById('directions-panel'));
 
-    geocoder    = new google.maps.Geocoder();
-    infoWindow  = new google.maps.InfoWindow({map: map});
-
-    // Try HTML5 geolocation.
+    // Tenta localizar a geolocalização do navagador.
     if (navigator.geolocation) {
 
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -134,16 +156,19 @@ function initMap() {
                 lng: position.coords.longitude
             };
 
+            /*var infoWindow  = new google.maps.InfoWindow({map: map});
+
             infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found.');
+            infoWindow.setContent('Location found.');*/
+
             map.setCenter(pos);
 
         }, function() {
-            handleLocationError(true, infoWindow, map.getCenter());
+            handleLocationError(true, map.getCenter());
         });
     } else {
-        // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
+        // Browser não suporta geolocalização
+        handleLocationError(false,  map.getCenter());
     }
 
     var marker = new google.maps.Marker({
@@ -153,6 +178,7 @@ function initMap() {
         title:      ''
     });
 
+    // Evento de alteração do centro
     map.addListener('center_changed', function() {
 
 //        window.setTimeout(function() {
@@ -160,119 +186,184 @@ function initMap() {
 //        }, 2000);
     });
 
+
+    //Evento onClick no mapa 
     google.maps.event.addListener(map, 'click', function(event) {
 
-        var image = 'https://cdn2.iconfinder.com/data/icons/snipicons/500/map-marker-32.png';
-
-        var marker = new google.maps.Marker({
-
-            position: event.latLng, 
-            map: map,
-            icon: image,
-            draggable: true,
-        });
-
-        marker.addListener('click', function() {
-            
-            map.setCenter(marker.getPosition());
-        });
-    
-        registerRoute(marker);
+        registerRoute(event.latLng);
     });
 
+    // Indica que foi inicializado
     statusGUI = STATUS_GUI.INIT_MAP_OK;
 }
 
+/*
+ * Calcula e mostra a rota
+ */
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
 
-
     directionsService.route({
-        origin: start_marker.getPosition(),
-        destination: end_marker.getPosition(),
-        optimizeWaypoints: true,
+        origin: start_position,
+        destination: end_position,
+        optimizeWaypoints: false,
         travelMode: 'DRIVING'
     }, function(response, status) {
 
         if (status === 'OK') {
+
             directionsDisplay.setDirections(response);
             var route = response.routes[0];
-            var summaryPanel = document.getElementById('directions-panel');
-            summaryPanel.innerHTML = '';
-            // For each route, display summary information.
+            //var summaryPanel = document.getElementById('summary-directions');
+            //summaryPanel.innerHTML = '';
+            
+            // Resumo de informações para cada rota.
             for (var i = 0; i < route.legs.length; i++) {
                 var routeSegment = i + 1;
-                summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
-                    '</b><br>';
-                summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
-                summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-                summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+//                summaryPanel.innerHTML += '<b>Rota: ' + routeSegment +'</b><br>';
+//                summaryPanel.innerHTML += 'Inicial(lat):' + route.legs[i].start_location.lat() + '<br>';
+//                summaryPanel.innerHTML += 'Inicial(lng):' + route.legs[i].start_location.lng() + '<br>';
+//                summaryPanel.innerHTML += 'Final(lat):'   + route.legs[i].end_location.lat() + '<br>' ;
+//                summaryPanel.innerHTML += 'Final(lat):'   + route.legs[i].end_location.lng() + '<br>';
+  
+                $('#lat_inicial').text(parseFloat(route.legs[i].start_location.lat().toFixed(5)));
+                $('#lng_inicial').text(parseFloat(route.legs[i].start_location.lng().toFixed(5)));
+                $('#lat_final').text(parseFloat(route.legs[i].end_location.lat().toFixed(5)));
+                $('#lng_final').text(parseFloat(route.legs[i].end_location.lng().toFixed(5)));                
+ 
+
+                socket.send(JSON.stringify({
+                    
+                    "command":"route",
+                    "route": route,
+                }));
             }
         } else {
-            window.alert('Directions request failed due to ' + status);
+            window.alert('Falha no pedido das direções: ' + status);
         }
     });
 }
 
-function registerRoute(marker){
+// Usada para definir os pontos de origeme e destino da rota
+function registerRoute(latlng){
+
 
     if(statusGUI==STATUS_GUI.EMPTY_ROUTE){
 
-        setStartPosition(marker);
+        createMarker("Origem",latlng);
+
+        setStartPosition(latlng);
 
     }else if(statusGUI==STATUS_GUI.START_POINT_OK){
-    
-        setEndPosition(marker);
+
+        createMarker("Destino",latlng);
+        
+        setEndPosition(latlng);
     }
 }
 
-function setStartPosition(marker){
+function createMarker(title,latlng){
 
-    start_marker = marker;
+    var image = 'https://cdn2.iconfinder.com/data/icons/snipicons/500/map-marker-32.png';
+    
+    var content = 
+        '<div id="container_infoWindow">'+
+            '<h1 id="title_infoWindow" class="firstHeading">'+title+'</h1>'+
+            '<div id="body_infoWindow'+title + '">'+
+                '<p>Latitude:  ' + latlng.lat() + '</p>'+
+                '<p>Longitude: ' + latlng.lng() + '</p>'+
+            '</div>'+
+        '</div>';
 
-    $('#start_lat').val(start_marker.position.lat());
-    $('#start_lng').val(start_marker.position.lng());
-    geocodeLatLng(start_marker.position,'#start_address');
+    var infowindow = new google.maps.InfoWindow({
+        content: content
+    });
+
+    //Evento para fechar automaticamente o infowindow
+    google.maps.event.addListener(infowindow, 'domready', function(){
+
+        window.setTimeout(function() {
+            infowindow.close();
+        }, 5000);
+    });
+
+    var marker = new google.maps.Marker({
+
+        position: latlng, 
+        map: map,
+        icon: image,
+        title: title,
+        draggable: true,
+    });
+
+    marker.addListener('click', function() {
+        
+        map.setCenter(marker.getPosition());
+    
+        infowindow.open(map, marker);
+        
+    });
+
+    geocodeLatLng(marker,infowindow);
+}
+
+// Define o ponto de origem da rota e atualiza o painel
+function setStartPosition(position){
+
+    start_position = position;
+
+    $('#start_lat').val(position.lat());
+    $('#start_lng').val(position.lng());
 
     statusGUI = STATUS_GUI.START_POINT_OK;
 }
 
-function setEndPosition(marker){
+// Define o ponto de destino da rota e atualiza o painel
+function setEndPosition(position){
 
-    end_marker = marker;
+    end_position =position;
 
-    $('#end_lat').val(end_marker.position.lat());
-    $('#end_lng').val(end_marker.position.lng());
-    geocodeLatLng(end_marker.position,'#end_address');
+    $('#end_lat').val(position.lat());
+    $('#end_lng').val(position.lng());
     
     statusGUI = STATUS_GUI.END_POINT_OK;
 }
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+// Chamada quando algum erro acorreu durante a localização do navegador
+function handleLocationError(browserHasGeolocation, pos) {
+
+/*    var infoWindow  = new google.maps.InfoWindow({map: map});
+    
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?
                                 'Ops! Não foi possivel obter a localização do navegador.' :
                                 'Error: Your browser doesn\'t support geolocation.');
-
+*/
 }
 
-function geocodeLatLng(position,info) {
+// Executa a geolocalização inversa e atualiza o painel de informações
+function geocodeLatLng(marker,info) {
     
-    geocoder.geocode({'location': position}, function(results, status) {
+    geocoder.geocode({'location': marker.position}, function(results, status) {
 
         if (status === 'OK') {
 
             if (results[1]) {
 
-                address = results[1].formatted_address;
+                var address = results[1].formatted_address;
 
-                $(info).val(address);
+                info.open(map, marker);
+                 
+                $('#body_infoWindow'+marker.getTitle()).append('<p>Endereço: ' + address + '</p>');
+
+                //$(info).val(address);
 
             } else {
-                window.alert('No results found');
+
+                window.alert('Não encontrado resultado para pesquisa');
             }
             
         } else {
-            window.alert('Geocoder failed due to: ' + status);
+            window.alert('Falha no Geocoder: ' + status);
         }
     });
 }

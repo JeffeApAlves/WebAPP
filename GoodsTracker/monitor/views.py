@@ -4,28 +4,28 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from .TLMConsumer import TLMConsumer
+from raspberryPI3.RBPI3 import RBPI3
 
-tlm = TLMConsumer()
+rbpi3 = RBPI3()
 
 @login_required(login_url='/log_in/')
 def index(request):
     return render(request, 'monitor/index.html')
 
 def pressure(request):    
-    return HttpResponse("Pressao: %s %%" % str(tlm.getPressure()))
+    return HttpResponse("Pressao: %s %%" % str(rbpi3.getPressure()))
 
 def humidity(request):
-    return HttpResponse("Humidade: %s %%" % str(tlm.getHumidity()))
+    return HttpResponse("Humidade: %s %%" % str(rbpi3.getHumidity()))
 
 def temperature(request):
-    return HttpResponse("Temperatura: %s Celsus" % str(tlm.getCPUtemperature()))
+    return HttpResponse("Temperatura: %s Celsus" % str(rbpi3.getCPUtemperature()))
     
 def cpu(request):
-    return HttpResponse("CPU: %s %%" % str(tlm.getCPU()))
+    return HttpResponse("CPU: %s %%" % str(rbpi3.getCPU()))
 
 def memory(request):
-    return HttpResponse("Memoria: %s MB" % str(tlm.getMemory()))
+    return HttpResponse("Memoria: %s MB" % str(rbpi3.getMemory()))
 
 def disk(request):
-    return HttpResponse("Disco: %s GB" % str(tlm.getDisk()))
+    return HttpResponse("Disco: %s GB" % str(rbpi3.getDisk()))

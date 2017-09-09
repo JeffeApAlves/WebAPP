@@ -1,15 +1,15 @@
 import json
 from threading import Thread
 from .consumers import sendTLM
-from .TLMConsumer import TLMConsumer 
 import time
+from raspberryPI3.RBPI3 import RBPI3
 
 UPDATE_INTERVAL = 5
 
-tlm = TLMConsumer()
+rbpi3 = RBPI3()
 
 class workerTLM (Thread):
-    # thread para inicilizacao do subscribe e publish da tlm envio periodico dos dados de telemetria"""
+    # thread para inicilizacao do subscribe e publish da tlm envio periodico dos dados de telemetria da RaspBerry"""
 
     def __init__(self):
         Thread.__init__(self)
@@ -18,13 +18,13 @@ class workerTLM (Thread):
     def run(self):
 
         self.count = 1
-        self.tlm.init()
-        self.tlm.loop_start()
+        self.rbpi3.init()
+        self.rbpi3.loop_start()
     
         while True:
             print("Get TLM")
-            self.tlm.readValues()
-            sendTLM(tlm)
+            self.rbpi3.readValues()
+            sendTLM(rbpi3)
             self.count += 1
             time.sleep(UPDATE_INTERVAL)
 

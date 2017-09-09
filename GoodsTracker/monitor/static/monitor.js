@@ -66,7 +66,7 @@ $(document).ready(function () {
         }));
     }, 2000);
     
-    // Requisita periodicamente( a cada 2s) os dados de telemetria
+    // Intervalo periodico de requisição ( a cada 2s) do dados de telemetria
     window.setInterval(function() {
     
         socket.send(JSON.stringify({
