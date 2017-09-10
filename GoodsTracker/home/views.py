@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
-@login_required(login_url='/log_in/')
+@login_required(login_url='/login/')
 def index(request):
     """
     NOTE: This is fine for demonstration purposes, but this should be
@@ -30,14 +30,12 @@ def log_in(request):
             return redirect(reverse('user:users_list'))
         else:
             print(form.errors)
-    return render(request, 'home/log_in.html', {'form': form})
-
+    return render(request, 'home/login.html', {'form': form})
 
 @login_required(login_url='/log_in/')
 def log_out(request):
     logout(request)
-    return redirect(reverse('home:log_in'))
-
+    return redirect(reverse('home:login'))
 
 def sign_up(request):
     form = UserCreationForm()
@@ -45,7 +43,10 @@ def sign_up(request):
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
             form.save()
-            return redirect(reverse('home:log_in'))
+            return redirect(reverse('home:login'))
         else:
             print(form.errors)
-    return render(request, 'home/sign_up.html', {'form': form})
+    return render(request, 'home/register.html', {'form': form})
+
+def forgot_pw(request):
+    return render(request, 'home/forgot-password.html')

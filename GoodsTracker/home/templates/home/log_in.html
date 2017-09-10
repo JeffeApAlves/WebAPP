@@ -9,7 +9,7 @@
 {% block content %}
 
    <center>
-    <form class="form-signin" action="{% url 'home:log_in' %}" method="post">
+    <form class="form-signin" action="{% url 'home:login' %}" method="post">
       <h2 class="form-signin-heading">Indetificação</h2>
       {% csrf_token %}
       {% for field in form %}
