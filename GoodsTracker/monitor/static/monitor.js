@@ -78,22 +78,21 @@ $(document).ready(function () {
     
 });
 
-// Evento pra tratar o envio de dados feito pelo servidor.
-// A callback sera invocada sempre que o server enviar dados para o client
-// Os dados serao mostrados na sessao Recepcao
+// Evento pra tratar o envio de dados feito pelo servidor atualizando a tabela.
+// A callback sera invocada sempre que o server enviar dados para o clie
 function handle_tlm(data) {
     
     count++;
 
     tlm = data.telemetry;
 
+    $('#count').text(count);
     $('#temperatura').text(tlm.temperature);
     $('#humidade').text(tlm.humidity);
     $('#cpu').text(tlm.cpu);
     $('#memoria').text(tlm.memory);
     $('#disco').text(tlm.disk);
     $('#pressao').text(tlm.pressure);
-    $('#header_text').text('Telemetria RB3 # ' + count);
 }
        
 // Funcao de retorno para o teste de latencia

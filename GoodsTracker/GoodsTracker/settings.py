@@ -156,7 +156,9 @@ STATIC_URL = '/static/'
 
 LOGOUT_REDIRECT_URL = '/'
 
-LOGIN_REDIRECT_URL = "/home/login/"
+LOGIN_REDIRECT_URL = "/user/login/"
+
+LOGIN_URL = "/user/login/"
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyCn1WH3o6v8rDP5kF9kYYeEXHDBtStoqwg'
 

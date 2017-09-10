@@ -2,7 +2,7 @@ from django.conf.urls import url
 from .views import *
 
 urlpatterns = [
-    url(r'^$', index, name='monitor'),
+    url(r'^$', index, name='index'),
     url(r'^pressure/$', pressure, name='pressure'),
     url(r'^humidity/$', humidity, name='humidity'),
     url(r'^temperature/$', temperature, name='temperature'),

@@ -8,7 +8,7 @@ from raspberryPI3.RBPI3 import RBPI3
 
 rbpi3 = RBPI3()
 
-@login_required(login_url='/log_in/')
+@login_required(login_url='../user/login/')
 def index(request):
     return render(request, 'monitor/index.html')
 
