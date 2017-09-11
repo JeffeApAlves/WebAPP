@@ -5,7 +5,7 @@ from channels import Channel, Group
 from channels.sessions import channel_session, enforce_ordering
 from channels.auth import channel_session_user, channel_session_user_from_http,channel_session_user_from_http
 from channels.security.websockets import allowed_hosts_only
-from raspberryPI3.RBPI3 import RBPI3
+from core.devices.RBPI3 import RBPI3
 
 rbpi3 = RBPI3()
 

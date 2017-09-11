@@ -8,7 +8,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    
     <meta name="description" content="">
     <meta name="author" content="">
     <title>{% block title %} GOODSTRACKER {% endblock %}</title>
@@ -78,14 +78,6 @@
             </a>
           </li>
 
-          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Chat">
-            <a class="nav-link" href="{% url 'chat:index' %}">
-              <i class="fa fa-fw fa-comments"></i>
-              <span class="nav-link-text">
-                Chat</span>
-            </a>
-          </li>
-
           <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Histórico">
             <a class="nav-link" href="{% url 'history:index' %}">
               <i class="fa fa-fw fa-road"></i>
@@ -110,6 +102,14 @@
             </a>
           </li>
 
+          <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Chat">
+            <a class="nav-link" href="{% url 'chat:index' %}">
+              <i class="fa fa-fw fa-comments"></i>
+              <span class="nav-link-text">
+                Chat</span>
+            </a>
+          </li>
+
           <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
             <a class="nav-link" href="#">
               <i class="fa fa-fw fa-link"></i>
@@ -117,7 +117,7 @@
                 Link</span>
             </a>
           </li>
-  
+
         </ul>
         <ul class="navbar-nav sidenav-toggler">
           <li class="nav-item">

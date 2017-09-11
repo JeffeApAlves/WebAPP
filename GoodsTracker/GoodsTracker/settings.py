@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'geoposition',
     'personal',
     'channels',
-    'raspberryPI3.apps.Raspberrypi3Config',
     'amqp.apps.AmqpConfig',
     'waypoints.apps.WaypointsConfig',
     'user.apps.UserConfig',

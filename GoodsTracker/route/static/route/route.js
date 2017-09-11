@@ -162,6 +162,7 @@ function initMap() {
             handleLocationError(true, map.getCenter());
         });
     } else {
+        
         // Browser não suporta geolocalização
         handleLocationError(false,  map.getCenter());
     }
@@ -182,7 +183,7 @@ function initMap() {
     });
 
 
-    // Evento onClick no mapa 
+    // Evento on click do mapa 
     google.maps.event.addListener(map, 'click', function(event) {
 
         registerRoute(event.latLng);
@@ -258,15 +259,13 @@ function registerRoute(latlng){
 // Cria um infowindow com a coordenada e o endereço correspondente
 function createInfo(marker){
 
-    var image = 'https://cdn2.iconfinder.com/data/icons/snipicons/500/map-marker-32.png';
-    
     var content = 
         '<div>'+
             '<h1>'+marker.title+'</h1>'+
             '<div>'+
-                '<p>Latitude:  ' + marker.position.latlng.lat() + '</p>'+
-                '<p>Longitude: ' + marker.position.latlng.lng() + '</p>'+
-                '<p>Endereço: '  + marker.position.address + '</p>'+
+                '<p>Latitude:  ' + marker.position.lat() + '</p>'+
+                '<p>Longitude: ' + marker.position.lng() + '</p>'+
+                '<p>Endereço: '  + marker.address + '</p>'+
             '</div>'+
         '</div>';
 
@@ -274,7 +273,7 @@ function createInfo(marker){
         content: content
     });
 
-    info.open(map, marker);
+    infowindow.open(map, marker);
 
     // Evento para fechar automaticamente o infowindow
     google.maps.event.addListener(infowindow, 'domready', function(){
@@ -287,27 +286,29 @@ function createInfo(marker){
 
 function createMarker(title,latlng){
 
+    var image = 'https://cdn2.iconfinder.com/data/icons/snipicons/500/map-marker-32.png';
+    
     var marker = new google.maps.Marker({
 
         position: latlng, 
         map: map,
+        draggable: true,
         icon: image,
         title: title,
-        draggable: true,
         typeMarker: title,
         address: '',
     });
 
-    marker.addListener('drag', handleEventOnDrag);
-    marker.addListener('dragend', handleEventOnDrag);
+    geocodeLatLng(marker);
+
+//    marker.addListener('drag', onDragEvent);
+    marker.addListener('dragend', onDragEvent);
     marker.addListener('click', function() {
         
         map.setCenter(marker.getPosition());
     
         createInfo(marker);        
     });
-
-    geocodeLatLng(marker);
 }
 
 // Define o ponto de origem da rota e atualiza o painel
@@ -332,31 +333,31 @@ function setEndPosition(position){
     statusGUI = STATUS_GUI.END_POINT_OK;
 }
 
-function handleEventOnDrag(event) {
+// Evento drag drop do marcador
+function onDragEvent(event) {
 
     if(this.typeMarker=="Origem"){
 
-        setStartPosition(event.latLng);
+        setStartPosition(this.position);
+        geocodeLatLng(this);
     }
  
     if(this.typeMarker=="Destino"){
         
-        setStartPosition(event.latlng);
+        setStartPosition(this.position);
+        geocodeLatLng(this);
     }
-
-    geocodeLatLng(this);
 }
 
 // Chamada quando algum erro acorreu durante a localização do navegador
 function handleLocationError(browserHasGeolocation, pos) {
 
-/*    var infoWindow  = new google.maps.InfoWindow({map: map});
+    var infoWindow  = new google.maps.InfoWindow({map: map});
     
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?
                                 'Ops! Não foi possivel obter a localização do navegador.' :
                                 'Error: Your browser doesn\'t support geolocation.');
-*/
 }
 
 // Executa a geolocalização inversa e atualiza o painel de informações
@@ -368,7 +369,7 @@ function geocodeLatLng(marker) {
 
             if (results[1]) {
 
-                //Preenche o endereço correspondente da coordenada
+                // Preenche o endereço correspondente da coordenada
                 marker.address = results[1].formatted_address;
 
                 createInfo(marker);

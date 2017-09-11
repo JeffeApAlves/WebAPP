@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from raspberryPI3.RBPI3 import RBPI3
+from core.devices.RBPI3 import RBPI3
 
 rbpi3 = RBPI3()
 

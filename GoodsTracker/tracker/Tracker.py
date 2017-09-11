@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 import paho.mqtt.client as mqtt
 import time
-from core.ThingSpeak.ThingSpeak import ThingSpeak
+from core.thingspeak.ThingSpeak import ThingSpeak
 from ast import literal_eval
 import json
 #from threading import Thread

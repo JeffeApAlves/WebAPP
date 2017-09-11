@@ -1,7 +1,7 @@
 
 .container-box {
     /*width: 100%;*/
-    height: calc(100vh - 200px);
+    height: calc(100vh - 56px);
     display: grid;
     grid-gap: 5px;
     grid-template-columns: 25% 15% 60%;
