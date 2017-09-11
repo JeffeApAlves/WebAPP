@@ -156,11 +156,6 @@ function initMap() {
                 lng: position.coords.longitude
             };
 
-            /*var infoWindow  = new google.maps.InfoWindow({map: map});
-
-            infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found.');*/
-
             map.setCenter(pos);
 
         }, function() {
@@ -187,7 +182,7 @@ function initMap() {
     });
 
 
-    //Evento onClick no mapa 
+    // Evento onClick no mapa 
     google.maps.event.addListener(map, 'click', function(event) {
 
         registerRoute(event.latLng);
@@ -230,7 +225,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                 $('#lat_final').text(parseFloat(route.legs[i].end_location.lat().toFixed(5)));
                 $('#lng_final').text(parseFloat(route.legs[i].end_location.lng().toFixed(5)));                
  
-
                 socket.send(JSON.stringify({
                     
                     "command":"route",
@@ -261,16 +255,18 @@ function registerRoute(latlng){
     }
 }
 
-function createMarker(title,latlng){
+// Cria um infowindow com a coordenada e o endereço correspondente
+function createInfo(marker){
 
     var image = 'https://cdn2.iconfinder.com/data/icons/snipicons/500/map-marker-32.png';
     
     var content = 
-        '<div id="container_infoWindow">'+
-            '<h1 id="title_infoWindow" class="firstHeading">'+title+'</h1>'+
-            '<div id="body_infoWindow'+title + '">'+
-                '<p>Latitude:  ' + latlng.lat() + '</p>'+
-                '<p>Longitude: ' + latlng.lng() + '</p>'+
+        '<div>'+
+            '<h1>'+marker.title+'</h1>'+
+            '<div>'+
+                '<p>Latitude:  ' + marker.position.latlng.lat() + '</p>'+
+                '<p>Longitude: ' + marker.position.latlng.lng() + '</p>'+
+                '<p>Endereço: '  + marker.position.address + '</p>'+
             '</div>'+
         '</div>';
 
@@ -278,13 +274,18 @@ function createMarker(title,latlng){
         content: content
     });
 
-    //Evento para fechar automaticamente o infowindow
+    info.open(map, marker);
+
+    // Evento para fechar automaticamente o infowindow
     google.maps.event.addListener(infowindow, 'domready', function(){
 
         window.setTimeout(function() {
             infowindow.close();
         }, 5000);
     });
+}
+
+function createMarker(title,latlng){
 
     var marker = new google.maps.Marker({
 
@@ -293,17 +294,20 @@ function createMarker(title,latlng){
         icon: image,
         title: title,
         draggable: true,
+        typeMarker: title,
+        address: '',
     });
 
+    marker.addListener('drag', handleEventOnDrag);
+    marker.addListener('dragend', handleEventOnDrag);
     marker.addListener('click', function() {
         
         map.setCenter(marker.getPosition());
     
-        infowindow.open(map, marker);
-        
+        createInfo(marker);        
     });
 
-    geocodeLatLng(marker,infowindow);
+    geocodeLatLng(marker);
 }
 
 // Define o ponto de origem da rota e atualiza o painel
@@ -328,6 +332,21 @@ function setEndPosition(position){
     statusGUI = STATUS_GUI.END_POINT_OK;
 }
 
+function handleEventOnDrag(event) {
+
+    if(this.typeMarker=="Origem"){
+
+        setStartPosition(event.latLng);
+    }
+ 
+    if(this.typeMarker=="Destino"){
+        
+        setStartPosition(event.latlng);
+    }
+
+    geocodeLatLng(this);
+}
+
 // Chamada quando algum erro acorreu durante a localização do navegador
 function handleLocationError(browserHasGeolocation, pos) {
 
@@ -341,7 +360,7 @@ function handleLocationError(browserHasGeolocation, pos) {
 }
 
 // Executa a geolocalização inversa e atualiza o painel de informações
-function geocodeLatLng(marker,info) {
+function geocodeLatLng(marker) {
     
     geocoder.geocode({'location': marker.position}, function(results, status) {
 
@@ -349,20 +368,18 @@ function geocodeLatLng(marker,info) {
 
             if (results[1]) {
 
-                var address = results[1].formatted_address;
+                //Preenche o endereço correspondente da coordenada
+                marker.address = results[1].formatted_address;
 
-                info.open(map, marker);
-                 
-                $('#body_infoWindow'+marker.getTitle()).append('<p>Endereço: ' + address + '</p>');
-
-                //$(info).val(address);
-
+                createInfo(marker);
+            
             } else {
 
                 window.alert('Não encontrado resultado para pesquisa');
             }
             
         } else {
+
             window.alert('Falha no Geocoder: ' + status);
         }
     });

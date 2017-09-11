@@ -10,53 +10,37 @@
 
 {% block content %}
 
-    <div id = 'container_route' class = "container_route" >
-            
-        <div id = "column_1" class="column_1">
+<div class="container-box">
+    <div class="box directions-panel" id = "directions-panel"></div>
+    <div class="box map" id="map"></div>
+    <div class="box summary-directions" id = "summary-directions">
+        <table class = "table table-condensed">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Lat</th>
+                    <th>Lng</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Inicial</td>
+                    <td id="lat_inicial"></td>
+                    <td id="lng_inicial"></td>
+                </tr>
+                <tr>
+                    <td>Final</td>
+                    <td id="lat_final"></td>
+                    <td id="lng_final"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="box tlm" id = 'tlm'>
+        <input type="submit" id="submit" class="btn btn-secondary btn-md mr-1">
+    </div>
+  </div>
 
-            <div class = "summary-directions">
-
-                <table class = "table table-hover">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Lat</th>
-                            <th>Lng</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Inicial</td>
-                            <td id="lat_inicial"></td>
-                            <td id="lng_inicial"></td>
-                        </tr>
-                        <tr>
-                            <td>Final</td>
-                            <td id="lat_final"></td>
-                            <td id="lng_final"></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </div>
-
-            <div id = "directions-panel"></div>
-
-        </div>
-
-        <div id = "column_2" class = "column_2">
-            <div id="map"></div>
-
-            <div id = 'tlm' >
-                <input type="submit" id="submit" class="btn btn-secondary btn-md mr-1">
-            </div>
-        </div>
-     </div>
-    
-<!--
-    <div id=waypoints>
-        {{content}}
-    </div>-->
 {% endblock %}
 
 {% block script %}
@@ -70,53 +54,3 @@
     <script src="{% static 'route/route.js' %}"></script>
 
 {% endblock %}
-
-
-<!--    
-
-<div id = 'item-tlm' class="tlm">
-
-    <input type="submit" id="submit" class="btn btn-secondary btn-md mr-1">
-    
-    <!--    
-    <H4>Origem</h4>
-    <form  id = 'form_start_route' method="post" action="#">
-
-        <div class="form-group">
-            <label for="start_lat">Latitude</label>
-            <input class="form-control" id="start_lat" placeholder="Latitude">
-        </div>
-
-        <div class="form-group">
-            <label for="start_lng">Longitude</label>
-            <input class="form-control" id="start_lng" placeholder="Longitude">
-        </div>
-
-        <div class="form-group">
-            <label for="start_address">Example textarea</label>
-            <textarea class="form-control" id="start_address" rows="3"></textarea>
-        </div>
-        
-    </form>
-
-    <H4>Destino</h4>
-    <form  id = 'form_end_route' method="post" action="#">
-        
-        <div class="form-group">
-            <label for="end_lat">Latitude</label>
-            <input class="form-control" id="end_lat" placeholder="Latitude">
-        </div>
-
-        <div class="form-group">
-            <label for="end_lng">Longitude</label>
-            <input class="form-control" id="end_lng" placeholder="Longitude">
-        </div>
-
-        <div class="form-group">
-            <label for="end_address">Endereço</label>
-            <textarea class="form-control" id="end_address" rows="3"></textarea>
-        </div>
-        
-    </form>
-        
-</div> -->

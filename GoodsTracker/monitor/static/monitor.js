@@ -1,7 +1,6 @@
 var count  = 0;
 var ping_pong_times = [];
 
-
 $(document).ready(function () {
   
     // Decide entre ws:// and wss://
@@ -25,9 +24,17 @@ $(document).ready(function () {
     // Hook para processa menssagem recebidoas pelo server
     socket.onmessage = function (message) {
 
-        //$('#log').append('<li class="list-group-item">' + message.data + '</li>');
-        
-        $('#log').append('<p class="list-group-item">' + message.data + '</p>');
+        $('#log').append(
+            '<a href="#" class="list-group-item list-group-item-action">'+
+            '<div class="media">'+
+                '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">'+
+                '<div class="media-body">'+
+                    message.data +
+                    '<div class="text-muted smaller">Timestamp ' +(new Date()).getTime()+ '</div>'+
+                '</div>'+
+            '</div>'+
+            '</a>'
+        );
 
         // Debug
         console.log("Got websocket message " + message.data);
