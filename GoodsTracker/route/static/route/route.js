@@ -286,14 +286,14 @@ function createInfo(marker){
 
 function createMarker(title,latlng){
 
-    var image = 'https://cdn2.iconfinder.com/data/icons/snipicons/500/map-marker-32.png';
+    var icon = 'https://cdn2.iconfinder.com/data/icons/snipicons/500/map-marker-32.png';
     
     var marker = new google.maps.Marker({
 
         position: latlng, 
         map: map,
         draggable: true,
-        icon: image,
+        icon: icon,
         title: title,
         typeMarker: title,
         address: '',

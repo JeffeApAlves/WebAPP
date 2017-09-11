@@ -4,8 +4,8 @@ var ping_pong_times = [];
 $(document).ready(function () {
   
     // Decide entre ws:// and wss://
-    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + "/monitor/stream/";
+    var ws_scheme   = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path     = ws_scheme + '://' + window.location.host + "/monitor/stream/";
     console.log("Conecatando em " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
     
@@ -64,13 +64,14 @@ $(document).ready(function () {
     };
 
     // Ping periodico (medição de latencia)
-    // Funcao inicia o teste de latencia enviando o ping e zera o cronometro
+    // Função inicia o teste de latencia enviando o ping e zera o cronometro
     window.setInterval(function() {
         start_time = (new Date()).getTime();
         socket.send(JSON.stringify({
         
             "command": "ping", 
         }));
+
     }, 2000);
     
     // Intervalo periodico de requisição ( a cada 2s) do dados de telemetria
@@ -80,7 +81,7 @@ $(document).ready(function () {
         
             "command":"update_monitor", 
         }));
-    
+
     }, 2000);
     
 });
@@ -112,8 +113,9 @@ function handle_pingpong(data) {
     ping_pong_times.push(latency);
     ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
     var sum = 0;
-    for (var i = 0; i < ping_pong_times.length; i++)
+    for (var i = 0; i < ping_pong_times.length; i++){
         sum += ping_pong_times[i];
+    }
     $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
 }
        
