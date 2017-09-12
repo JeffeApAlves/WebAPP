@@ -1,65 +1,73 @@
-from __future__ import print_function
 import os
-import paho.mqtt.client as mqtt
 import time
-from core.thingspeak.ThingSpeak import ThingSpeak
-from ast import literal_eval
 import json
-#from threading import Thread
 import threading
 import time
+import pika
+from .RabbitMQConfig import RabbitMQConfig
+from channels import Channel, Group
 
-#ThingSpeak
-# ID do canal do ThingSpeak
-TLM_CHANNEL_ID = "315831"
-# Chave de escrita da API para o canal
-TLM_READ_API_KEY = "TF63H3V6I2UWO954"
-#Host mqtt do ThigSpeak
-mqttHost = "mqtt.thingspeak.com"
+QUEUE_TLM = "TLM00002"
 
-#Porta 
-tPort = 80
+connection  = pika.BlockingConnection(parameters=RabbitMQConfig.getConnectionParameters())    
+channel     = connection.channel()
 
 class Tracker (threading.Thread):
 
-    def __init__(self):
+    def __init__(self,ch):
         super(Tracker, self).__init__()
         self._stop_event = threading.Event()
-        self.count = 0
-        self.temperature = 0
-        self.cpu = 0
-        self.memory = 0
-        self.disk=''
-        self.pressure = 0
-        self.humidity = 0
-        self.ts = ThingSpeak()
         self.values = None
         self.route = None
-        self.count = 0
+        self.reply_channel = ch
+        self.start()
 
-    def init(self):
-        pass
-#        self.client = mqtt.Client()
-#        self.client.connect(mqttHost,tPort)
- 
-    def getCPUtemperature(self):
-        return self.values.temperature
-  
-    def getCPU(self):
-        return self.values.cpu
+    def createConsume(self):
+        channel.basic_consume(self.callbackTLM,
+                            queue=QUEUE_TLM,
+                            no_ack=True)
+        channel.start_consuming()
+        print("Criado o consume da Queue: " + QUEUE_TLM)
 
-    def getMemory(self):
-        return self.values.memory
+    def callbackTLM(self,ch, method, properties, body):
+        
+        datas = body.decode('utf-8').split(",")
 
-    def getDisk(self):
-         return self.values.disk
+        tlm = {
+            'address':  datas[0] ,
+            'dest':  datas[1] ,
+            'timestamp': datas[2],
+            'operation': datas[3],
+            'resource': datas[4],
+            'size_pl': datas[5],
 
-    def getPressure(self):
-        return self.values.pressure
+            'lat': datas[6],
+            'lng': datas[7],
+            'acce':{'X':datas[8],'Y':datas[9],'Z':datas[10]},
+            'acce_G':{'X':datas[11],'Y':datas[12],'Z':datas[13]},
 
-    def getHumidity(self):
-        return self.values.humidity
+            'speed': datas[14],
+            'level':datas[15],
+            'lock': datas[16],
+            'timestamp_tlm': datas[17],
+        }
+        payload = json.dumps({"telemetry":tlm})
+        self.reply_channel.send({"text":payload})
+        print("Enviado TLM:" + str(payload))
 
+
+    def run(self):
+        time.sleep(10)
+        self.createConsume();
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
+
+        
+'''
     def readTLM(self):
         
         lat = 0
@@ -94,17 +102,4 @@ class Tracker (threading.Thread):
             'lock': 1,
             'timestamp_tlm': 321982389,
         }
-           
-    def loop_start(self):
-        pass
-#        self.client.loop_start()
-
-    def run(self):
-        self.values = self.ts.readChannel(channel=TLM_CHANNEL_ID,key=TLM_READ_API_KEY)
-        time.sleep(5)
-
-    def stop(self):
-        self._stop_event.set()
-
-    def stopped(self):
-        return self._stop_event.is_set()
+'''           

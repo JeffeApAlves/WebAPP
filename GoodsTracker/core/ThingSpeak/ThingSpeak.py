@@ -8,7 +8,7 @@ class ThingSpeak (object):
                            % (channel,key))
         response = conn.read()
         #Debug
-        print("http status code=%s" % (conn.getcode()))
+        print("ThingSpeak http status code=%s" % (conn.getcode()))
         data=json.loads(response)
         conn.close()
         return data

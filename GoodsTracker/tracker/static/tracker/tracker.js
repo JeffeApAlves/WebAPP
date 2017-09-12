@@ -5,13 +5,13 @@ $(document).ready(function () {
   
     // Decide entre ws:// and wss://
     var ws_scheme   = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path     = ws_scheme + '://' + window.location.host + "/monitor/stream/";
+    var ws_path     = ws_scheme + '://' + window.location.host + "/tracker/stream/";
     console.log("Conecatando em " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
     
     socket.onopen = function () {
 
-        console.log("Conectado no ws: "+ ws_path);
+        console.log("Conectado no ws: " + ws_path);
     };
 
     socket.onclose = function () {
@@ -24,20 +24,21 @@ $(document).ready(function () {
 
         $('#log').append(
             '<a href="#" class="list-group-item list-group-item-action">'+
-              '<div class="media">'+
+            '<div class="media">'+
                 '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">'+
                 '<div class="media-body">'+
                     message.data +
                     '<div class="text-muted smaller">Atualizado em: ' + 
                         ((new Date()).getTime()/1000.0).toString()+ 
                     '</div>'+
+                '</div>'+
             '</div>'+
-              '</div>'+
             '</a>'
         );
 
-        console.log("Got websocket message " + message.data);
+        console.log("Got ws message " + message.data);
    
+        // Decode the JSON
         var data = JSON.parse(message.data);
    
         // Handle errors
@@ -73,14 +74,14 @@ $(document).ready(function () {
     }, 2000);
     
     // Intervalo periodico de requisição ( a cada 2s) do dados de telemetria
-    window.setInterval(function() {
+    /*window.setInterval(function() {
     
         socket.send(JSON.stringify({
         
-            "command":"update_monitor", 
+            "command":"update_tlm", 
         }));
 
-    }, 2000);
+    }, 2000);*/
     
 });
 
@@ -93,12 +94,16 @@ function handle_tlm(data) {
     tlm = data.telemetry;
 
     $('#count').text(count);
-    $('#temperatura').text(tlm.temperature);
-    $('#humidade').text(tlm.humidity);
-    $('#cpu').text(tlm.cpu);
-    $('#memoria').text(tlm.memory);
-    $('#disco').text(tlm.disk);
-    $('#pressao').text(tlm.pressure);
+    $('#lat').text(tlm.lat);
+    $('#lng').text(tlm.lng);
+    $('#acce_X').text(tlm.acce.X);
+    $('#acce_Y').text(tlm.acce.Y);
+    $('#acce_Z').text(tlm.acce.Z);
+    $('#acce_XG').text(tlm.acce_G.X);
+    $('#acce_YG').text(tlm.acce_G.Y);
+    $('#acce_ZG').text(tlm.acce_G.Z);
+    $('#lock').text(tlm.lock);
+    $('#timestamp').text(tlm.timestamp_tlm);
 }
        
 // Funcao de retorno para o teste de latencia
@@ -116,4 +121,4 @@ function handle_pingpong(data) {
     }
     $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
 }
-
+       

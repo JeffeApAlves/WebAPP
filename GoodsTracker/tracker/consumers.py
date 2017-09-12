@@ -6,18 +6,19 @@ from channels.security.websockets import allowed_hosts_only
 from .Tracker import Tracker
 
 GRUPO_TRACKERS = "trackers"
-tracker = Tracker()
 
 # Permite apenas os servidores listados no settings.py
 @allowed_hosts_only
 # Conectado um websocket
 @channel_session_user_from_http
 def ws_connect(message):
+    #tracker.createConsume()
     group = Group(GRUPO_TRACKERS)
     # Adiciona no grupo
     group.add(message.reply_channel)
-    # Envia messangem Accept the connection request
+    # Envia menssagem Accept the connection request
     message.reply_channel.send({"accept": True})
+    tracker = Tracker(message.reply_channel)
     print("connect-tracker")
  
 # Conectado em um websocket
@@ -25,7 +26,7 @@ def ws_connect(message):
 def ws_disconnect(message):
     Group(GRUPO_TRACKERS).discard(message.reply_channel)
     print("disconnect-tracker")
-    tracker.stop()
+    #tracker.stop()
 
 def ws_receive(message):
     payload = json.loads(message['text'])
@@ -37,15 +38,16 @@ def ws_receive(message):
 def tracker_ping(message):
     payload = json.dumps({"pong": "test"})
     message.reply_channel.send({"text": payload})
-    print("Enviado pong:" + payload)
 
 @channel_session_user
 @channel_session
 def tracker_tlm(message):
-    payload = json.dumps({"telemetry":tracker.readTLM()})
-    message.reply_channel.send({"text": payload})
+    pass
+    #payload = json.dumps({"telemetry":tracker.readTLM()})
+    #message.reply_channel.send({"text": payload})
 
 @channel_session_user
 @channel_session
 def tracker_route(message):
     tracker.route = message['route']
+

@@ -5,7 +5,6 @@ import time
 from core.thingspeak.ThingSpeak import ThingSpeak
 from ast import literal_eval
 import json
-#from threading import Thread
 import threading
 import time
 
@@ -27,12 +26,13 @@ VALUE_HUMIDITY = 'field6'
 #Porta 
 tPort = 80
 
-class RBPI3 (threading.Thread):
+#class RBPI3 (threading.Thread):
+class RBPI3 (object):
+    
 
     def __init__(self):
-#        Thread.__init__(self)
-        super(RBPI3, self).__init__()
-        self._stop_event = threading.Event()
+#        super(RBPI3, self).__init__()
+#        self._stop_event = threading.Event()
         self.count = 0
         self.temperature = 0
         self.cpu = 0
@@ -83,9 +83,11 @@ class RBPI3 (threading.Thread):
 #        self.client.loop_start()
 
     def run(self):
-        self.values = self.ts.readChannel(channel=TLM_CHANNEL_ID,key=TLM_READ_API_KEY)
-        print("Thread ativada")
-        time.sleep(5)
+        pass
+#        while(self.stopped() is not True):
+#            self.values = self.ts.readChannel(channel=TLM_CHANNEL_ID,key=TLM_READ_API_KEY)
+#            print("Leitura do canal do ThingSpeak")
+#            time.sleep(5)
 
     def stop(self):
         self._stop_event.set()
