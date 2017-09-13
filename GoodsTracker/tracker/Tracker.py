@@ -7,7 +7,7 @@ import pika
 from .RabbitMQConfig import RabbitMQConfig
 from channels import Channel, Group
 
-QUEUE_TLM   = "TLM00002"
+QUEUE_TLM   = "TLM%05d"
 connection  = pika.BlockingConnection(parameters=RabbitMQConfig.getConnectionParameters())    
 
 class Tracker (threading.Thread):
@@ -20,6 +20,7 @@ class Tracker (threading.Thread):
         self.route = None
         self.reply_channel = ch
         self.channel = None
+        self.queue_name = QUEUE_TLM % (nr) 
         self.start()
 
     def stopConsuming(self):
@@ -27,11 +28,11 @@ class Tracker (threading.Thread):
 
     def startConsuming(self):
         self.channel.start_consuming()
-        print("Criado o consume da Queue: " + QUEUE_TLM)
+        print("Criado o consume da Queue: " + self.queue_name)
 
     def createConsume(self):
         self.channel.basic_consume(self.callbackTLM,
-                            queue=QUEUE_TLM,
+                            queue=self.queue_name,
                             no_ack=True)
 
     def callbackTLM(self,ch, method, properties, body):
@@ -44,7 +45,7 @@ class Tracker (threading.Thread):
             'timestamp': datas[2],
             'operation': datas[3],
             'resource': datas[4],
-            'size_pl': datas[5],
+            #'size_pl': datas[5], nao existe a necessidade
 
             'lat': datas[6],
             'lng': datas[7],
@@ -59,7 +60,6 @@ class Tracker (threading.Thread):
         payload = json.dumps({"telemetry":tlm})
         self.reply_channel.send({"text":payload})
         print("Enviado TLM:" + str(payload))
-
 
     def run(self):
         self.channel = connection.channel()

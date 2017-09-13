@@ -1,6 +1,7 @@
 
+/*
 .container-box {
-    /*width: 100%;*/
+    width: 100%;
     height: calc(100vh - 56px);
     display: grid;
     grid-gap: 5px;
@@ -12,7 +13,7 @@
 }
 
 .box {
-    /*background-color: #9009A0;*/
+    background-color: #9009A0;
     font-size: smaller;
     margin: 0;
     padding: 0;
@@ -34,4 +35,30 @@
 .tlm {
     overflow: auto;
     grid-area: d;
+}
+*/
+
+#table_position{
+
+    font-size: smaller;
+    margin: 0;
+    padding: 0;
+    width:100%;
+}
+
+.container-directions{
+    max-width: none;
+    overflow: auto;
+    padding-left:0;
+    padding-right:0;
+    max-height:  200px;
+}
+
+.container-map{
+    max-width: none;
+    height:  500px;
+}
+
+.padding-2{
+    padding-left:2;
 }

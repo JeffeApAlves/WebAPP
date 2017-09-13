@@ -46,11 +46,11 @@ def tracker_ping(message):
 def tracker_connect(message):
     global tracker
     tracker = Tracker(message.reply_channel,int(message['nr_tracker']))
-    print("Criado rastreador nr " + message['nr_tracker'])
 
 @channel_session_user
 @channel_session
 def tracker_route(message):
     global tracker
+    tracker = Tracker(message.reply_channel,int(message['nr_tracker']))
     tracker.route = message['route']
 

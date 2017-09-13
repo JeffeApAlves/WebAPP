@@ -26,12 +26,12 @@ $(document).ready(function () {
  
     socket.onopen = function () {
 
-        console.log("Conectado no WebSocket: " + ws_path);
+        console.log("Conectado no ws: " + ws_path);
     };
         
     socket.onclose = function () {
 
-        console.log("Desconectado do websocket: " + ws_path);
+        console.log("Desconectado do ws: " + ws_path);
     };
 
     // Hook para processa menssagem recebidoas pelo server
@@ -51,73 +51,60 @@ $(document).ready(function () {
             return;
         }
         
+        //Hook de processamento das menssagens
         if (data.telemetry) {
 
-            console.log("Chegou o blaster mega power");
-            
             handle_tlm(data);
 
-        } else if (data.pong) {
+        }  else {
 
-            handle_pingpong(data);
-    
-        } else {
-
-            console.log("Ops !!! Não foi possivel manusear a mensagem recebida !");
+            console.log("Ops !!! Não foi possivel manusear o tipo de mensagem recebida !");
         }
     };
-        
 
     document.getElementById('submit').addEventListener('click', function() {
  
         calculateAndDisplayRoute(directionsService, directionsDisplay);
     });
 
-    // Intervalo de requisição periodico ( a cada 2s) dos dados de telemetria
-    window.setInterval(function() {
-    
-        console.log("Comando de requisição da telemetria enviado!");
-        
-        socket.send(JSON.stringify({
-        
-            "command":"update_tlm", 
-        }));
-    
-    }, 2000);
-
     statusGUI = STATUS_GUI.EMPTY_ROUTE;
 });
 
-// Função de retorno para o teste de latencia
-// Essa funcao sera invocada quando o server enviar o pong como command. 
-// O delta de tempo e computado e o resultado registrado em uma lista 
-// para o calculo da media dos 10 ultimos valores
-function handle_pingpong(data) {
-    
-    var latency = (new Date()).getTime() - start_time;
-    ping_pong_times.push(latency);
-    ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
-    var sum = 0;
-    for (var i = 0; i < ping_pong_times.length; i++)
-        sum += ping_pong_times[i];
-    $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
-}
-        
 // Evento pra tratar o envio das informações de telemetria enviada pelo servidor.
 // Sera invocada sempre que o servidor enviar dados
 function handle_tlm(data) {
 
+    updatePosicao(data);
+    updateProgressBar('#acce_X',data.telemetry.acce_G.X,0.0,4.0);
+    updateProgressBar('#acce_Y',data.telemetry.acce_G.Y,0.0,4.0);
+    updateProgressBar('#acce_Z',data.telemetry.acce_G.Z,0.0,4.0);
+    updateProgressBar('#vel',data.telemetry.speed,0.0,300);
+}    
+
+function updatePosition(data){
+
     var pos = {
-        lat: data.telemetry.lat,
-        lng: data.telemetry.lng,
+        lat: parseFloat(data.telemetry.lat),
+        lng: parseFloat(data.telemetry.lng),
     };
 
     var marker = new google.maps.Marker({
         
-            position:   pos,
-            map:        map,
-            title:      '',
+        position:   pos,
+        map:        map,
+        title:      '',
     });
+}
+
+function updateProgressBar(bar,val_str, min,max){
+
+    var val = parseFloat(val_str);
+
+    var r = Math.round((val*100)/max);
+    var r_str = r.toString();
+
+    $(bar).attr('aria-valuenow', r_str).css('width',r_str+"%");
+
 }
 
 // Inicializa a entidade map (Google)
@@ -230,9 +217,11 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                     
                     "command":"route",
                     "route": route,
+                    "nr_tracker": 2,
                 }));
             }
         } else {
+            
             window.alert('Falha no pedido das direções: ' + status);
         }
     });
