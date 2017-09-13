@@ -73,16 +73,19 @@ $(document).ready(function () {
 
     }, 2000);
     
-    // Intervalo periodico de requisição ( a cada 2s) do dados de telemetria
-    /*window.setInterval(function() {
-    
-        socket.send(JSON.stringify({
-        
-            "command":"update_tlm", 
-        }));
 
-    }, 2000);*/
-    
+    $('#bt_connection').click(function(ev){
+
+        console.log("Valor: " + $('#txt_nr_tracker').val());
+
+        socket.send(JSON.stringify({
+            
+            "command": "tracker_connect",
+            
+            "nr_tracker": $('#txt_nr_tracker').val(),
+        }));
+ 
+    });
 });
 
 // Evento pra tratar o envio de dados feito pelo servidor atualizando a tabela.
@@ -106,8 +109,8 @@ function handle_tlm(data) {
     $('#timestamp').text(tlm.timestamp_tlm);
 }
        
-// Funcao de retorno para o teste de latencia
-// Essa funcao sera invocada quando o server enviar o pong como command. 
+// Retorno para o teste de latencia
+// Essa função será invocada quando o server enviar o pong como command. 
 // O delta de tempo e computado e o resultado registrado em uma lista 
 // para o calculo da media dos 10 ultimos valores
 function handle_pingpong(data) {

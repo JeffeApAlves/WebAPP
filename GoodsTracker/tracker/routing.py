@@ -15,6 +15,6 @@ websocket_routing = [
 custom_routing = [
 
     route("tracker.receive", tracker_ping, command="^ping$"),
-    route("tracker.receive", tracker_tlm,  command="^update_tlm$"),
+    route("tracker.receive", tracker_connect, command="^tracker_connect$"),
     route("tracker.receive", tracker_route,  command="^route$"),
 ]

@@ -7,27 +7,32 @@ import pika
 from .RabbitMQConfig import RabbitMQConfig
 from channels import Channel, Group
 
-QUEUE_TLM = "TLM00002"
-
+QUEUE_TLM   = "TLM00002"
 connection  = pika.BlockingConnection(parameters=RabbitMQConfig.getConnectionParameters())    
-channel     = connection.channel()
 
 class Tracker (threading.Thread):
 
-    def __init__(self,ch):
+    def __init__(self,ch,nr):
         super(Tracker, self).__init__()
         self._stop_event = threading.Event()
+        self.address = nr
         self.values = None
         self.route = None
         self.reply_channel = ch
+        self.channel = None
         self.start()
 
+    def stopConsuming(self):
+        self.channel.stop_consuming()
+
+    def startConsuming(self):
+        self.channel.start_consuming()
+        print("Criado o consume da Queue: " + QUEUE_TLM)
+
     def createConsume(self):
-        channel.basic_consume(self.callbackTLM,
+        self.channel.basic_consume(self.callbackTLM,
                             queue=QUEUE_TLM,
                             no_ack=True)
-        channel.start_consuming()
-        print("Criado o consume da Queue: " + QUEUE_TLM)
 
     def callbackTLM(self,ch, method, properties, body):
         
@@ -44,7 +49,7 @@ class Tracker (threading.Thread):
             'lat': datas[6],
             'lng': datas[7],
             'acce':{'X':datas[8],'Y':datas[9],'Z':datas[10]},
-            'acce_G':{'X':datas[11],'Y':datas[12],'Z':datas[13]},
+            'acce_G':{'X':round(float(datas[11]),2),'Y':round(float(datas[12]),2),'Z':round(float(datas[13]),2)},
 
             'speed': datas[14],
             'level':datas[15],
@@ -57,11 +62,15 @@ class Tracker (threading.Thread):
 
 
     def run(self):
-        time.sleep(10)
-        self.createConsume();
+        self.channel = connection.channel()
+        time.sleep(1)
+        self.createConsume()
+        self.startConsuming()
 
     def stop(self):
         self._stop_event.set()
+        self.stopConsuming()
+        self.channel.close()
 
     def stopped(self):
         return self._stop_event.is_set()
