@@ -3,7 +3,7 @@ from channels import Channel, Group
 from channels.sessions import channel_session, enforce_ordering
 from channels.auth import channel_session_user, channel_session_user_from_http,channel_session_user_from_http
 from channels.security.websockets import allowed_hosts_only
-from .Tracker import Tracker
+from core.domain.Tracker import Tracker
 
 GRUPO_TRACKERS = "trackers"
 
@@ -50,7 +50,12 @@ def tracker_connect(message):
 @channel_session_user
 @channel_session
 def tracker_route(message):
+    print("Criando tracker...")
     global tracker
     tracker = Tracker(message.reply_channel,int(message['nr_tracker']))
     tracker.route = message['route']
 
+@channel_session_user
+@channel_session
+def tracker_statistics(message):
+    pass

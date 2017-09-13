@@ -4,7 +4,7 @@ import json
 import threading
 import time
 import pika
-from .RabbitMQConfig import RabbitMQConfig
+from ..rabbitmq.RabbitMQConfig import RabbitMQConfig
 from channels import Channel, Group
 
 QUEUE_TLM   = "TLM%05d"
@@ -25,6 +25,7 @@ class Tracker (threading.Thread):
 
     def stopConsuming(self):
         self.channel.stop_consuming()
+        self.channel.close()
 
     def startConsuming(self):
         self.channel.start_consuming()

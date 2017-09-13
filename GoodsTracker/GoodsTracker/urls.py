@@ -12,5 +12,5 @@ urlpatterns = [
     url(r'^dashboard/', include('dashboard.urls', namespace='dashboard')),
     url(r'^monitor/', include('monitor.urls', namespace='monitor')),
     url(r'^user/', include('user.urls', namespace='user')),
-    url(r'^way/', include('waypoints.urls', namespace="waypoints")),
+    url(r'^graphics/', include('graphics.urls', namespace="graphics")),
 ]

@@ -16,5 +16,6 @@ custom_routing = [
 
     route("tracker.receive", tracker_ping, command="^ping$"),
     route("tracker.receive", tracker_connect, command="^tracker_connect$"),
+    route("tracker.receive", tracker_statistics, command="^tracker_stat$"),
     route("tracker.receive", tracker_route,  command="^route$"),
 ]
