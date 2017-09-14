@@ -25,10 +25,8 @@ def ws_connect(message):
 @channel_session
 def ws_disconnect(message):
     Group(GRUPO_TRACKERS).discard(message.reply_channel)
-    #if tracker:
-    #    print("Desconectando...")
-    tracker.stop()
     print("disconnect-tracker")
+    disconnect_tracker()
 
 def ws_receive(message):
     payload = json.loads(message['text'])
@@ -50,7 +48,6 @@ def tracker_connect(message):
 @channel_session_user
 @channel_session
 def tracker_route(message):
-    print("Criando tracker...")
     global tracker
     tracker = Tracker(message.reply_channel,int(message['nr_tracker']))
     tracker.route = message['route']
@@ -59,3 +56,7 @@ def tracker_route(message):
 @channel_session
 def tracker_statistics(message):
     pass
+
+def disconnect_tracker():
+    if tracker:
+        tracker.stop()

@@ -20,8 +20,10 @@ class RabbitMQConfig(object):
     def getConnectionParameters():    
 
         credentials = pika.PlainCredentials(RabbitMQConfig.USER, RabbitMQConfig.PW)
-        params = pika.ConnectionParameters(RabbitMQConfig.HOST,RabbitMQConfig.PORT,RabbitMQConfig.VHOST,credentials,socket_timeout=1000,heartbeat_interval=200)
-      
-        return params
+        return pika.ConnectionParameters( host = RabbitMQConfig.HOST,
+                                            port = RabbitMQConfig.PORT,
+                                            virtual_host = RabbitMQConfig.VHOST,
+                                            credentials  = credentials,
+                                            socket_timeout = 1000,
+                                            heartbeat_interval = 200)
 
-    

@@ -54,7 +54,7 @@ $(document).ready(function () {
         //Hook de processamento das menssagens
         if (data.telemetry) {
 
-            handle_tlm(data);
+            handle_tlm(data.telemetry);
 
         }  else {
 
@@ -72,20 +72,20 @@ $(document).ready(function () {
 
 // Evento pra tratar o envio das informações de telemetria enviada pelo servidor.
 // Sera invocada sempre que o servidor enviar dados
-function handle_tlm(data) {
+function handle_tlm(telemetry) {
 
-    updatePosicao(data);
-    updateProgressBar('#acce_X',data.telemetry.acce_G.X,0.0,4.0);
-    updateProgressBar('#acce_Y',data.telemetry.acce_G.Y,0.0,4.0);
-    updateProgressBar('#acce_Z',data.telemetry.acce_G.Z,0.0,4.0);
-    updateProgressBar('#vel',data.telemetry.speed,0.0,300);
+    updatePosition(telemetry);
+    updateProgressBar('#acce_X',telemetry.acce_G.X,0.0,4.0);
+    updateProgressBar('#acce_Y',telemetry.acce_G.Y,0.0,4.0);
+    updateProgressBar('#acce_Z',telemetry.acce_G.Z,0.0,4.0);
+    updateProgressBar('#vel',telemetry.speed,0.0,300);
 }    
 
-function updatePosition(data){
+function updatePosition(telemetry){
 
     var pos = {
-        lat: parseFloat(data.telemetry.lat),
-        lng: parseFloat(data.telemetry.lng),
+        lat: parseFloat(telemetry.lat),
+        lng: parseFloat(telemetry.lng),
     };
 
     var marker = new google.maps.Marker({
@@ -94,6 +94,8 @@ function updatePosition(data){
         map:        map,
         title:      '',
     });
+
+    map.setCenter(pos);
 }
 
 function updateProgressBar(bar,val_str, min,max){
@@ -132,7 +134,7 @@ function initMap() {
     //Configura saídas da direção
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
-
+/*
     // Tenta localizar a geolocalização do navagador.
     if (navigator.geolocation) {
 
@@ -160,14 +162,14 @@ function initMap() {
         map:        map,
         title:      ''
     });
-
+*/
     // Evento de alteração do centro
-    map.addListener('center_changed', function() {
-
+//    map.addListener('center_changed', function() {
+//
 //        window.setTimeout(function() {
 //          map.panTo(marker.getPosition());
 //        }, 2000);
-    });
+//    });
 
 
     // Evento on click do mapa 
@@ -195,13 +197,15 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         if (status === 'OK') {
 
             directionsDisplay.setDirections(response);
+            
             var route = response.routes[0];
+            
             //var summaryPanel = document.getElementById('summary-directions');
             //summaryPanel.innerHTML = '';
             
             // Resumo de informações para cada rota.
             for (var i = 0; i < route.legs.length; i++) {
-                var routeSegment = i + 1;
+//                var routeSegment = i + 1;
 //                summaryPanel.innerHTML += '<b>Rota: ' + routeSegment +'</b><br>';
 //                summaryPanel.innerHTML += 'Inicial(lat):' + route.legs[i].start_location.lat() + '<br>';
 //                summaryPanel.innerHTML += 'Inicial(lng):' + route.legs[i].start_location.lng() + '<br>';

@@ -37,7 +37,6 @@
     grid-area: d;
 }
 */
-
 #table_position{
 
     font-size: smaller;
@@ -51,10 +50,16 @@
     overflow: auto;
     padding-left:0;
     padding-right:0;
-    max-height:  200px;
+    max-height:  400px;
+    
 }
 
 .container-map{
+    max-width: none;
+    height:  500px;
+}
+
+#map{
     max-width: none;
     height:  500px;
 }

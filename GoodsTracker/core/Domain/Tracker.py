@@ -8,35 +8,33 @@ from ..rabbitmq.RabbitMQConfig import RabbitMQConfig
 from channels import Channel, Group
 
 QUEUE_TLM   = "TLM%05d"
-connection  = pika.BlockingConnection(parameters=RabbitMQConfig.getConnectionParameters())    
 
 class Tracker (threading.Thread):
 
     def __init__(self,ch,nr):
         super(Tracker, self).__init__()
         self._stop_event = threading.Event()
-        self.address = nr
-        self.values = None
-        self.route = None
+        self._address = nr
         self.reply_channel = ch
-        self.channel = None
-        self.queue_name = QUEUE_TLM % (nr) 
+        self._connection  = None
+        self._closing = False
+        self._channel = None
+        self._consumer_tag = None
+        self._queue_name = QUEUE_TLM % (nr) 
         self.start()
 
-    def stopConsuming(self):
-        self.channel.stop_consuming()
-        self.channel.close()
-
-    def startConsuming(self):
-        self.channel.start_consuming()
-        print("Criado o consume da Queue: " + self.queue_name)
-
-    def createConsume(self):
-        self.channel.basic_consume(self.callbackTLM,
-                            queue=self.queue_name,
+    def stop_consuming(self):
+       if self._channel:
+            print('Cancelando consumer')
+            self._channel.basic_cancel(self.on_cancelok, self._consumer_tag)
+        
+    def start_consuming(self):
+        self.add_on_cancel_callback()
+        self._consumer_tag = self._channel.basic_consume(self.on_message_tlm,
+                            queue=self._queue_name,
                             no_ack=True)
 
-    def callbackTLM(self,ch, method, properties, body):
+    def on_message_tlm(self,ch, method, properties, body):
         
         datas = body.decode('utf-8').split(",")
 
@@ -63,53 +61,81 @@ class Tracker (threading.Thread):
         print("Enviado TLM:" + str(payload))
 
     def run(self):
-        self.channel = connection.channel()
-        time.sleep(1)
-        self.createConsume()
-        self.startConsuming()
-
-    def stop(self):
-        self._stop_event.set()
-        self.stopConsuming()
-        self.channel.close()
-
+        self.connect()
+ 
     def stopped(self):
         return self._stop_event.is_set()
 
-        
-'''
-    def readTLM(self):
-        
-        lat = 0
-        lng = 0
+    def connect(self):
+        param = RabbitMQConfig.getConnectionParameters()
+        print("Conectando no broker: " + str(param))
+        self._connection = pika.SelectConnection(parameters=param,
+                                        on_open_callback=self.on_connection_open,
+                                        on_open_error_callback=self.on_connection_open_error,
+                                        stop_ioloop_on_close=False)
+        self._connection.ioloop.start()
 
-        if self.route != None and self.count < len(self.route['legs'][0]['steps']):
-            if self.count % 2 == 0:
-                lat = self.route['legs'][0]['steps'][self.count]['start_location']['lat']
-                lng = self.route['legs'][0]['steps'][self.count]['start_location']['lng']
-            else:
-                lat = self.route['legs'][0]['steps'][self.count]['end_location']['lat']
-                lng = self.route['legs'][0]['steps'][self.count]['end_location']['lng']
-                pass
+    def on_connection_open(self,connection):
+        self._connection = connection
+        print("Conectado no broker...")
+        self.add_on_connection_close_callback()
+        self.open_channel()
 
-            self.count+=1
+    def on_connection_open_error(self):
+        print("Erro ao temtar conectar no broker !!!")
 
+    def on_channel_open(self,channel):
+        print("Criado o canal no broker")
+        self._channel = channel
+        self.start_consuming()
+        print("Criado o consume da Queue: " + self._queue_name)
 
-        return {
-            'address':  2 ,
-            'dest':  1 ,
-            'timestamp': 1288239239,
-            'operation': 'AN',
-            'resource': 'TLM',
+    def add_on_connection_close_callback(self):
+        self._connection.add_on_close_callback(self.on_connection_closed)
 
-            'lat': lat,
-            'lng': lng,
-            'acce,':{'X':2000,'Y':3000,'Z':4000},
-            'acce_G,':{'X':0.2,'Y':0.3,'Z':1},
+    def on_connection_closed(self, connection, reply_code, reply_text):
 
-            'speed': 60,
-            'level':1000,
-            'lock': 1,
-            'timestamp_tlm': 321982389,
-        }
-'''           
+        self._channel = None
+        if self._closing:
+            self._connection.ioloop.stop()
+        else:
+            print("Conexão com o broker finalizada")
+            self._connection.add_timeout(5, self.reconnect)
+
+    def reconnect(self):
+
+        print("Reconectando com o broker ...")
+
+        self._connection.ioloop.stop()
+
+        if not self._closing:
+            self.connect()
+
+    def open_channel(self):
+        print('Criando o canal no Broker')
+        self._connection.channel(on_open_callback=self.on_channel_open)
+
+    def add_on_cancel_callback(self):
+        self._channel.add_on_cancel_callback(self.on_consumer_cancelled)
+
+    def on_consumer_cancelled(self, method_frame):
+        print("Consumer cancelado")
+        if self._channel:
+            self._channel.close()
+
+    def on_cancelok(self, unused_frame):
+        print('RabbitMQ tem o conhecimento do cancelamento do consumer')
+        self.close_channel()
+
+    def close_channel(self):
+        self._channel.close()
+        print('Canal fechado')
+
+    def stop(self):
+        self._closing = True
+        self.stop_consuming()
+        self._connection.ioloop.start()
+        self._stop_event.set()
+
+    def close_connection(self):
+        self._connection.close()
