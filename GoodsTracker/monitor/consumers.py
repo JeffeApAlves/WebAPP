@@ -33,7 +33,7 @@ def ws_receive(message):
     payload = json.loads(message['text'])
     payload['reply_channel'] = message.content['reply_channel']
     Channel("monitor.receive").send(payload)
-    print("WS Monitor rx:" + str(message.content))
+    print("BE(Monitor)-RX:" + str(message.content))
 
 @channel_session_user
 @channel_session
@@ -46,7 +46,7 @@ def monitor_ping(message):
 def monitor_updateTLM(message):
     payload = json.dumps({"telemetry":rbpi3.readTLMChannel()})
     message.reply_channel.send({"text": payload})
-    print("Enviado Monitor:" + str(payload))
+    print("BE(Monitor)-TX:" + str(payload))
 
 @channel_session_user
 @channel_session

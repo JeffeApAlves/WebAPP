@@ -81,8 +81,10 @@ class Tracker (threading.Thread):
         self.add_on_connection_close_callback()
         self.open_channel()
 
-    def on_connection_open_error(self):
-        print("Erro ao temtar conectar no broker !!!")
+    def on_connection_open_error(self,a,erro):
+        #print(a)
+        print(erro)
+        print("Erro ao tentar conectar no broker !!!")
 
     def on_channel_open(self,channel):
         print("Criado o canal no broker")
