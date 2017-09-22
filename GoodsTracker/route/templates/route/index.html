@@ -60,7 +60,17 @@
 
         <div class="col-xs-7 col-sm-6 col-lg-3 padding-2">
 
-            <input type="submit" id="submit" class="btn btn-secondary btn-md mr-1">
+            <!--<input type="submit" id="submit" class="btn btn-secondary btn-md mr-1">-->
+
+            <div class="input-group">
+                <input id = "txt_nr_tracker" type="number" class="form-control" placeholder="Nr. rastreador" min="1" max="65535">
+                <span class="input-group-btn">
+                    <input type="submit" id="submit" class="btn btn-secondary btn-md mr-1">
+                    <!--<button id = "bt_connection" class="btn btn-default" type="button">Conectar</button>-->
+                </span>
+            </div>
+            
+            <br>
 
             <div class="card mb-3">
                 <div class="card-header"><i class="fa fa-arrows"></i>

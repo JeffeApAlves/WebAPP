@@ -221,7 +221,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                     
                     "command":"route",
                     "route": route,
-                    "nr_tracker": 2,
+                    "nr_tracker": $('#txt_nr_tracker').val(),
                 }));
             }
         } else {

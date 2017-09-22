@@ -36,7 +36,7 @@ class Tracker (threading.Thread):
 
     def on_message_tlm(self,ch, method, properties, body):
         
-        datas = body.decode('utf-8').split(",")
+        datas = body.decode('utf-8').split(":")
 
         tlm = {
             'address':  datas[0] ,
@@ -137,7 +137,7 @@ class Tracker (threading.Thread):
         self._closing = True
         self.stop_consuming()
         self._connection.ioloop.start()
-        self._stop_event.set()
+        #self._stop_event.set()
 
     def close_connection(self):
         self._connection.close()
