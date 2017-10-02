@@ -12,8 +12,8 @@ class RabbitMQConfig(object):
 #    HOST = "localhost"
 #    HOST = '192.168.0.104'
     HOST = '192.168.42.1'
-    USER = "senai_pc"
-    PW = "senai_pc"
+    USER = "senai_ws"
+    PW = "senai_ws"
     VHOST = "/"
     PORT = 5672
  

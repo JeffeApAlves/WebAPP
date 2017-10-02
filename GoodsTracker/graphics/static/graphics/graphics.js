@@ -43,7 +43,7 @@ function factoryDataChar(){
             }],
             yAxes: [{
             ticks: {
-                min: 0,
+                min: -2.0000,
                 max: 2.0000,
                 maxTicksLimit: 5
             },

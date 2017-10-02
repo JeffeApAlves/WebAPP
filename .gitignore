@@ -2,4 +2,8 @@ env
 GeoDjangoTutorial1.7-master
 geodjango-googlemaps.zip
 
+*.pyc
 GoodsTracker/tracker/__pycache__/
+GoodsTracker/GoodsTracker/__pycache__/
+GoodsTracker/core/rabbitmq/__pycache__/
+GoodsTracker/core/Domain/__pycache__/

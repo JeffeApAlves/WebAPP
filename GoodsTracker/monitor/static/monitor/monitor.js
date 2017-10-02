@@ -80,7 +80,7 @@ $(document).ready(function () {
             "command":"update_monitor", 
         }));
 
-    }, 2000);
+    }, 1000);
     
 });
 

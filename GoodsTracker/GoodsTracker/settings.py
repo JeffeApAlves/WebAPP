@@ -8,6 +8,9 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
+
+python manage.py runserver 192.168.42.16:8000
+
 """
 
 import os
@@ -25,7 +28,7 @@ SECRET_KEY = '3#d+0)w$9td2_h2d(m_bz5*@#%a7^49ae*bfa0uxh%@6dt*)ey'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','192.168.0.114','192.168.42.12']
+ALLOWED_HOSTS = ['localhost','192.168.0.114','192.168.42.12','192.168.42.16','192.168.42.18']
 
 
 # Application definition

@@ -107,6 +107,7 @@ function handle_tlm(data) {
     $('#acce_ZG').text(tlm.acce_G.Z);
     $('#lock').text(tlm.lock);
     $('#timestamp').text(tlm.timestamp_tlm);
+    $('#tanque').text(tlm.level);
 }
        
 // Retorno para o teste de latencia
