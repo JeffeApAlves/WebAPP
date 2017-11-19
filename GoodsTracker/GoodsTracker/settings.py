@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 
-python manage.py runserver 192.168.42.16:8000
 
 """
 
@@ -17,7 +16,6 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -28,7 +26,7 @@ SECRET_KEY = '3#d+0)w$9td2_h2d(m_bz5*@#%a7^49ae*bfa0uxh%@6dt*)ey'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','192.168.0.114','192.168.42.12','192.168.42.16','192.168.42.18','192.168.42.21']
+ALLOWED_HOSTS = ['192.168.42.1','localhost','192.168.0.114','192.168.42.12','192.168.42.16','192.168.42.18','192.168.42.21']
 
 
 # Application definition
@@ -71,7 +69,10 @@ ROOT_URLCONF = 'GoodsTracker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [
+            'templates',
+             os.path.join(BASE_DIR,'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -103,6 +104,8 @@ DATABASES = {
         'NAME': 'geodatabase',
         'USER': 'geouser',
         'PASSWORD': 'geopassword',
+        'HOST': '192.168.42.1',
+        'PORT': '5432',
     }
 
 }
