@@ -1,4 +1,15 @@
 ******************************************************************
+Serviços
+******************************************************************
+
+192.168.42.1:15672           web Adm RabbitMQ
+192.168.42.1:1883            MQTT
+192.168.42.1:3000            ntopng
+192.168.42.1:8000            GoodsTracker
+192.168.42.1/phpldapadmin/   Adm LDAP
+192.168.42.1:5050            Adm POstgreSQL
+
+******************************************************************
 1. Criacao de ambientes python
 ******************************************************************
 
@@ -55,6 +66,10 @@ python ../env/lib/python3.6/site-packages/pgadmin4/pgAdmin4.py
 4. Configuracao servidor postgres
 ******************************************************************
 
+4.1 Verificar banco
+    psql -h HOST -U USUARIODOBANCO -W
+    SELECT version();
+
 4.1 Configuracao do ip  e porta do servifor 
 sudo nano /etc/postgresql/9.6/main/postgresql.conf
 
@@ -62,11 +77,24 @@ sudo nano /etc/postgresql/9.6/main/postgresql.conf
 sudo nano /etc/postgresql/9.6/main/pg_hba.conf
 
 4.3 Criacao de usuario banco de dados
-    psql -h 127.0.0.1 -U postgres
+
+    psql -h 192.168.42.1 -U postgres -W
 
     CREATE USER nomedousuario SUPERUSER INHERIT CREATEDB CREATEROLE;
     ALTER USER my_user_name with password 'my_secure_password';
     ALTER USER nomedousuario PASSWORD 'senha';
+4.4 nano /var/log/postgresql/postgresql-9.6-main.log
+
+4.5 Firewall
+
+    sudo iptables -t nat -S
+    sudo iptables -S
+
+    iptables -A INPUT -p tcp -s 0/0 --sport 1024:65535 -d 192.168.42.1  --dport 5432 -m state --state NEW,ESTABLISHED -j ACCEPT
+    iptables -A OUTPUT -p tcp -s 192.168.42.1 --sport 5432 -d 0/0 --dport 1024:65535 -m state --state ESTABLISHED -j ACCEPT
+
+    sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+
 
 
 ******************************************************************
@@ -76,14 +104,15 @@ sudo nano /etc/postgresql/9.6/main/pg_hba.conf
 5.1. Verifica quais servicos e em quais portas estão escutando
     netstat -atp tcp | grep -i "listen"
 
-4.2 Verifica o status do servico
+5.2 Verifica o status do servico
     sudo service postgresql status/start/stop/restart
 
 
-4.3 lista  quem esta usando a porta
+5.3 lista  quem esta usando a porta
     sudo fuser 80/tcp
 
-
+5.4 Verifica as portas
+    sudo nmap 192.168.42.1
 
 
 ******************************************************************
@@ -92,19 +121,19 @@ sudo nano /etc/postgresql/9.6/main/pg_hba.conf
 
 sudo nano /etc/phpldapadmin/config.php
 
-
 editar o arquivo
 sudo nano /etc/apache2/apache2.conf
 
-colocando no final
-
-Include /etc/phpmyadmin/apache.conf
+colocando no final 'Include /etc/phpmyadmin/apache.conf'
 
 
-7 Ntopng
+******************************************************************
+7. Ntopng
+******************************************************************
 
-redis-cli ping
+7.1 Apagar senha
+    redis-cli ping
 
-echo -n "opensesame" | md5sum 
+    echo -n "opensesame" | md5sum 
 
-redis-cli SET user.admin.password ea847988ba59727dbf4e34ee75726dc3
+    redis-cli SET user.admin.password ea847988ba59727dbf4e34ee75726dc3
