@@ -1,7 +1,7 @@
 Conteudo para estruturação e elaboração da apresentação
 
 ******************************************************************
-1. Ambiente virtual python (virtualenvwrapper)
+1. Ambiente virtual Python (virtualenvwrapper)
 ******************************************************************
 
     1.1 Instalar a ferramenta de gerenciamento de ambieentes python
@@ -25,9 +25,12 @@ Conteudo para estruturação e elaboração da apresentação
     lsvirtualenv - lista os ambientes 
     rmvirtualenv  - remove ambiente
     cpvirtualenv copia
+
     1. 7.Ativa o ambiente
     workon nome_ambiente
 
+    1.8.Python 2.7 (Qunado necessaŕio)
+    Selecionar atraves do sudo update-alternatives --config python
 
 Referencias: 
     https://pt.stackoverflow.com/questions/52/como-usar-o-virtualenv-para-gerenciar-as-depend%C3%AAncias-duma-aplica%C3%A7%C3%A3o-python
@@ -272,6 +275,14 @@ Testando DNS
 
     kill -HUP sudo kill -HUP `cat /tmp/web_django.pid`
 
+Referencias:
+    http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/
+    http://tutos.readthedocs.io/en/latest/source/ndg.html
+    http://pythonclub.com.br/configurando-um-servidor-de-producao-para-aplicacoes-python.html
+    http://docs.gunicorn.org/en/latest/run.html
+    https://www.youtube.com/watch?v=G1U6rQa8x1s
+    http://uwsgi-docs.readthedocs.io/en/latest/Nginx.html
+
 ******************************************************************
 19 .IDES e editores 
 ******************************************************************
@@ -286,16 +297,26 @@ Testando DNS
 20. OpenOCD
 ******************************************************************
 
-       A) Configuração openocd: 
+    20.1. Configuração openocd: 
           http://esp-idf.readthedocs.io/en/latest/api-guides/jtag-debugging/tips-and-quirks.html#jtag-debugging-tip-openocd-configure-target
 
+
+    20.1. Configurar a interface
+     5.1 O arquivo de configuração da interface se enontra na rasp em /usr/local/share/openocd/scripts/interface/raspberrypi-native.cfg
+        Configurar:
+           bcm2835gpio_trst_num 7
+           adapter_khz 20000
+
+    20.2 As variaveis de ambinete serao colocadas no arquivo ~/.profile
+       export PATH=$PATH:$HOME/esp/xtensa-esp32-elf/bin
+       export IDF_PATH=~/esp/esp-idf
 
 
 ******************************************************************
 21. ESP32
 ******************************************************************
 
-    1. Instalação e configuração do toolchains
+    21.1. Instalação e configuração do toolchains
 
     21.2. Instalação do SDK
         Espressif idf-esp
@@ -308,14 +329,20 @@ Testando DNS
         https://esp-idf.readthedocs.io/en/v2.0/linux-setup.html
 
 
-
 ******************************************************************
 22. FreeRTOS
 ******************************************************************
 
+******************************************************************
+23. SUMO
+******************************************************************
 
 ******************************************************************
-23. Rede
+24. omnet++
+******************************************************************
+
+******************************************************************
+25. Rede
 ******************************************************************
 
     23.1 Teste de DNS
@@ -338,20 +365,8 @@ Testando DNS
 
 
 ******************************************************************
-24. Misc
+26. Misc
 ******************************************************************
 
     File explorer for linux:
     mc
-
-
-******************************************************************
-25. RDeploy
-******************************************************************
-
-    http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/
-    http://tutos.readthedocs.io/en/latest/source/ndg.html
-    http://pythonclub.com.br/configurando-um-servidor-de-producao-para-aplicacoes-python.html
-    http://docs.gunicorn.org/en/latest/run.html
-    https://www.youtube.com/watch?v=G1U6rQa8x1s
-    http://uwsgi-docs.readthedocs.io/en/latest/Nginx.html

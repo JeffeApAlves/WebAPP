@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-#  Menu para configuração de projetos com ESP32 utilizando o SDK IDF e OpenOCD para debug
+#  Gerenciador do projeto Goodstracker 
 #
 #  Existe um segundo script "openocd.sh" que será rodado no server openocd (raspberry)
 #  Opções   <comando>       run: inicia o servidor
@@ -11,10 +11,14 @@
 #           -i <interface> Nome do arquivo correpsonente a interafce que sera usado no debug
 #           -t <target> Nome do arquivo correpsonde ao target que sera debugado
 #           -u <url> Url do repositorio do openocd para instala;'ao'
-#  Steps:
-#   1. Conectar ambos (rasp+computador) em uma mesma rede com acersso a internet
 #
-#   2. Criar o mesmo usuario em ambos equipamento (rasp+computador)
+#  Menu para configuração de projetos com ESP32 utilizando o SDK IDF e OpenOCD para debug
+#
+#  Steps:
+# 
+#   1. Conectar ambos (raspibarry+computador) em uma mesma rede com acesso a internet
+#
+#   2. Criar o mesmo usuario em ambos(raspiberry+computador)
 #    2.1 adduser -m nome_usuario
 #
 #   3. Providenciar, para o usuaro criado sudo e bypass de senha para sudo atraves
@@ -28,25 +32,10 @@
 #       https://www.ssh.com/ssh/copy-id
 #       https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
 #
-#   5. Configurar a interface
-#    5.1 O arquivo de configuração da interface se enontra na rasp em /usr/local/share/openocd/scripts/interface/raspberrypi-native.cfg
-#        Configurar:
-#           bcm2835gpio_trst_num 7
-#           adapter_khz 20000
-#
-#   6. As variaveis de ambinete serao colocadas no arquivo ~/.profile
-#       export PATH=$PATH:$HOME/esp/xtensa-esp32-elf/bin
-#       export IDF_PATH=~/esp/esp-idf
-#
-#   7.Python 2.7 
-#    7.1 Selecionar atraves do sudo update-alternatives --config python
-#
+
 
 #Ambiente
 export IP=$(ifconfig | grep 'inet ' | awk '/192.168.42/{print $2}')
-
-#Servidor WEB
-#PORT_HOST=8010
 
 #usuario
 user=$(whoami)
@@ -905,15 +894,15 @@ if [ $cmd = "menuconfig" ]; then
     event_process
 
     clear
-elif  [ $1 = "update" ]; then
+elif  [ $cmd = "update" ]; then
 
     pip freeze --local > $ENV_PACKAGES && pip install -U -r $ENV_PACKAGES
 
-elif  [ $1 = "sync" ]; then
+elif  [ $cmd = "sync" ]; then
 
     rsync -avz $GTRACKER_HOME jefferson@$DEPLOY_GTRACKER
 
 else
-  echo "comandos disponivies: menuconfig | update | sync"
+  echo "OPção $cmd invalida. Comandos disponivies: menuconfig | update | sync"
   exit -2
 fi
