@@ -2,7 +2,7 @@ $(document).ready(function () {
   
     // Correctly decide between ws:// and wss://
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + "/chat/stream/";
+    var ws_path = ws_scheme + '://' + window.location.host + "/ws/chat/";
     console.log("Connecting to " + ws_path);
     var socket = new ReconnectingWebSocket(ws_path);
 

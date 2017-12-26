@@ -2,17 +2,17 @@
 #
 #  Menu para configuração de projetos com ESP32 utilizando o SDK IDF e OpenOCD para debug
 #
-#  Existe um segundo script "openocd.sh" que será rodado na raspberry
+#  Existe um segundo script "openocd.sh" que será rodado no server openocd (raspberry)
 #  Opções   <comando>       run: inicia o servidor
 #                           stop: para o servidor
 #                           install: instala/atualiza o openocd
 #                           reset: reinicia o target
 #                           shutdown: desliga o target
-#           -i <interface> Nome do arquivo correpsonente que sera usado no debug
+#           -i <interface> Nome do arquivo correpsonente a interafce que sera usado no debug
 #           -t <target> Nome do arquivo correpsonde ao target que sera debugado
-#           -u <url> Url do repositorio do openocd
+#           -u <url> Url do repositorio do openocd para instala;'ao'
 #  Steps:
-#   1. Conectar ambos (rasp+computador) na mesma rede com acersso a internet
+#   1. Conectar ambos (rasp+computador) em uma mesma rede com acersso a internet
 #
 #   2. Criar o mesmo usuario em ambos equipamento (rasp+computador)
 #    2.1 adduser -m nome_usuario
@@ -41,37 +41,19 @@
 #   7.Python 2.7 
 #    7.1 Selecionar atraves do sudo update-alternatives --config python
 #
-#   8.Referencias:
-#       A) Configuração openocd: 
-#          http://esp-idf.readthedocs.io/en/latest/api-guides/jtag-debugging/tips-and-quirks.html#jtag-debugging-tip-openocd-configure-target
-#       B) Paths do git e toolchains e comandos estão baseados nesse documento: 
-#          http://esp-idf.readthedocs.io/en/latest/get-started/
-#       C) Configuração toolchain
-#          https://esp-idf.readthedocs.io/en/v2.0/linux-setup.html
-
-
-#alias p_sel='sudo update-alternatives --config python'
-#alias pgAdmin='python $PG_ADMIN'
-#alias gTracker='python $GTRACKER_PATH/manage.py runserver $WEB_HOST'
-#alias pip-u-all='pip freeze --local > /tmp/env_p && pip install -U -r /tmp/env_p'
-#alias sync-gTracker='rsync -avz $GTRACKER_PATH jefferson@$IP_HOST:$GTRACKER_PATH_HOST'
 
 #Ambiente
 export IP=$(ifconfig | grep 'inet ' | awk '/192.168.42/{print $2}')
-PYTHON_VERSION=python3.6
 
 #Servidor WEB
-IP_HOST=192.168.42.1
-PORT_HOST=8000
-WEB_HOST="$IP_HOST:$PORT_HOST"
+#PORT_HOST=8010
 
 #usuario
 user=$(whoami)
 
 #Projeto Goodstrackers
-BASE_WEB_PATH=/media/jefferson/Dados/workspace/WebAPP
-export GTRACKER_PATH=$BASE_WEB_PATH/GoodsTracker
-GTRACKER_PATH_HOST=/home/jefferson
+BASE_PATH=/media/jefferson/Dados/workspace/WebAPP
+export DEPLOY_GTRACKER=gtracker.com:/var/www/gtracker
 
 #arquivo  temporario com a lista  dos pacotes python 
 ENV_PACKAGES=/tmp/env_packages.txt
@@ -857,9 +839,9 @@ function show_screen() {
 
 function install_dialog() {
 
-    local pacote=$(dpkg --get-selections | grep "dialog" )
-
     echo "Por favor espere..."
+
+    local pacote=$(dpkg --get-selections | grep "dialog" )
 
     if [ ! -n "$pacote" ] ; then 
     
@@ -929,7 +911,7 @@ elif  [ $1 = "update" ]; then
 
 elif  [ $1 = "sync" ]; then
 
-    rsync -avz $GTRACKER_PATH jefferson@$IP_HOST:$GTRACKER_PATH_HOST
+    rsync -avz $GTRACKER_HOME jefferson@$DEPLOY_GTRACKER
 
 else
   echo "comandos disponivies: menuconfig | update | sync"

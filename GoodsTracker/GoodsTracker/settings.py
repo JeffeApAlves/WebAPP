@@ -26,7 +26,10 @@ SECRET_KEY = '3#d+0)w$9td2_h2d(m_bz5*@#%a7^49ae*bfa0uxh%@6dt*)ey'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.42.1','localhost','192.168.0.114','192.168.42.12','192.168.42.16','192.168.42.18','192.168.42.21']
+#Atencao Configurar o arquivo hosts ou DNS
+ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.42.1','gtracker.com']
+
+#CHANNELS_WS_PROTOCOLS = ["graphql-ws", ]
 
 
 # Application definition
@@ -34,7 +37,7 @@ ALLOWED_HOSTS = ['192.168.42.1','localhost','192.168.0.114','192.168.42.12','192
 INSTALLED_APPS = [
 
     'geoposition',
-    'personal',
+    #'personal',
     'channels',
     'graphics.apps.GraphicsConfig',
     'user.apps.UserConfig',
@@ -99,12 +102,11 @@ DATABASES = {
     #}
 
     'default': {
-        'HOST' : 'localhost',
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'geodatabase',
         'USER': 'geouser',
         'PASSWORD': 'geopassword',
-        'HOST': '192.168.42.1',
+        'HOST': 'gtracker-data',
         'PORT': '5432',
     }
 
@@ -165,6 +167,9 @@ LOGIN_REDIRECT_URL = "/user/login/"
 LOGIN_URL = "/user/login/"
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyCn1WH3o6v8rDP5kF9kYYeEXHDBtStoqwg'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "sfiles"), )
 
 GEOPOSITION_MAP_OPTIONS = {
     'minZoom': 15,
