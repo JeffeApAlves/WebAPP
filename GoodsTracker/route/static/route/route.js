@@ -20,7 +20,7 @@ var statusGUI = STATUS_GUI.INIT;
 $(document).ready(function () {
 
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path   = ws_scheme + '://' + window.location.hostname + ":9000/tracker/stream/";
+    var ws_path     = ws_scheme + '://' + window.location.host + "/ws/tracker/";
     console.log("Conecatando em " + ws_path);
     socket = new ReconnectingWebSocket(ws_path);
  
