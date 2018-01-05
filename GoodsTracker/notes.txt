@@ -297,6 +297,9 @@ Referencias:
 20. OpenOCD
 ******************************************************************
 
+    Server para clientes gdb. Rodando na raspberry pi 0, transformandoa em uma adapter jtag.
+    É possivel configurar a interface de uso. no caso foi configurado de forma a utilizar o GPIOS da própria rb.
+
     20.1. Configuração openocd: 
           http://esp-idf.readthedocs.io/en/latest/api-guides/jtag-debugging/tips-and-quirks.html#jtag-debugging-tip-openocd-configure-target
 
@@ -311,23 +314,22 @@ Referencias:
        export PATH=$PATH:$HOME/esp/xtensa-esp32-elf/bin
        export IDF_PATH=~/esp/esp-idf
 
-
 ******************************************************************
 21. ESP32
 ******************************************************************
+
+    O toolchain possui um gdb client 
 
     21.1. Instalação e configuração do toolchains
 
     21.2. Instalação do SDK
         Espressif idf-esp
         git clone https://github.com/espressif/esp-idf.git
-
           
     B) Paths do git e toolchains e comandos estão baseados nesse documento: 
         http://esp-idf.readthedocs.io/en/latest/get-started/
     C) Configuração toolchain
         https://esp-idf.readthedocs.io/en/v2.0/linux-setup.html
-
 
 ******************************************************************
 22. FreeRTOS
@@ -335,11 +337,30 @@ Referencias:
 
 ******************************************************************
 23. SUMO
+
+    23.1 tools
+    Adionar a variavel de ambiente SUMO_HOME = path do sumo
+
+    23.2    Tools
+    osmBuild.py - executa o netconver e o polyconvert
+    osmGet - download do map
+    sumo-gui execução a simulação com o modo gráfico habilitado
+    sumo simulação sem o modo gráfico
+    netconvert converte mapas(osm,...) para o formato sumo
+    polyconvert converte os poligonos do mapa para o formato sumo
+    netedt -  editor de net.xml (formato sumo)
+
 ******************************************************************
 
 ******************************************************************
 24. omnet++
 ******************************************************************
+
+    24.1 Instalação
+    https://omnetpp.org/doc/omnetpp/InstallGuide.pdf
+
+    24.2 Executando a IDE
+    omnetpp
 
 ******************************************************************
 25. Rede
@@ -363,10 +384,20 @@ Referencias:
         192.168.42.1:5432                                                   gtracker-data
         192.168.42.1/phpldapadmin/                                          Adm LDAP
 
+******************************************************************
+26 JOSM
+******************************************************************
+
+    26.1 Instalação editor de java OSM editor
+    https://josm.openstreetmap.de/wiki/Download
 
 ******************************************************************
-26. Misc
+27. Misc
 ******************************************************************
 
-    File explorer for linux:
-    mc
+    27.1 mc -File explorer para linux na linha de comando:
+
+28. OpenMapStreet
+
+    Base cartografica aberta onde é possivel exportar um xml no formato osm. Esse arquivo é usado como entrada para o netconvert. 
+    Obtendo como sáida um xml(net.xml) no formato sumo

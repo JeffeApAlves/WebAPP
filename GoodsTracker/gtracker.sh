@@ -1,21 +1,20 @@
 #! /bin/bash
 #
-#  Gerenciador do projeto Goodstracker 
+#  Gerenciador do projeto Goodstracker
 #
 #  Existe um segundo script "openocd.sh" que será rodado no server openocd (raspberry)
-#  Opções   <comando>       run: inicia o servidor
-#                           stop: para o servidor
-#                           install: instala/atualiza o openocd
-#                           reset: reinicia o target
-#                           shutdown: desliga o target
+#  <comando>       config: menu de configuração
+#                  update: atualiza
+#                  deploy: sincroniza\atualiza arquivos  no webserver
+# [opções]
 #           -i <interface> Nome do arquivo correpsonente a interafce que sera usado no debug
 #           -t <target> Nome do arquivo correpsonde ao target que sera debugado
-#           -u <url> Url do repositorio do openocd para instala;'ao'
+#           -u <url> Url do repositorio do openocd para instala;
 #
 #  Menu para configuração de projetos com ESP32 utilizando o SDK IDF e OpenOCD para debug
 #
 #  Steps:
-# 
+#
 #   1. Conectar ambos (raspibarry+computador) em uma mesma rede com acesso a internet
 #
 #   2. Criar o mesmo usuario em ambos(raspiberry+computador)
@@ -23,14 +22,11 @@
 #
 #   3. Providenciar, para o usuaro criado sudo e bypass de senha para sudo atraves
 #    3.1 visudo
-#    3.2 alex ALL=NOPASSWD: ALL
+#    3.2 <usuario> ALL=NOPASSWD: ALL
 #
 #   4. Providenciar RSA do seu usario
 #    4.1 ssh-keygen -t rsa
 #    4.2 ssh-copy-id user@ip_machine
-#    4.3 Referencias
-#       https://www.ssh.com/ssh/copy-id
-#       https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2
 #
 
 
@@ -84,7 +80,7 @@ function select_file() {
     local title=$1
     local path=$2
     local ext_file=$3
-    local source=${4:-"LOCAL"}  
+    local source=${4:-"LOCAL"}
     local dir_content=""
     local curdir=""
 
@@ -104,7 +100,7 @@ function select_file() {
     fi
 
     if [ "$curdir" != "/" ] ; then
-        dir_content="../ Voltar $dir_content" 
+        dir_content="../ Voltar $dir_content"
     fi
 
     selection=$(dialog --stdout \
@@ -118,18 +114,18 @@ function select_file() {
 
     if [ $RET -eq 0 ]; then
 
-        if [[ -d "$selection" ]]; then 
-            
+        if [[ -d "$selection" ]]; then
+
             select_file "$title" "$selection" "$ext_file" "$source"
-        
-        elif [[ -f "$selection" ]]; then 
- 
-            if [[ $selection == *$ext_file ]]; then # verifica a exxtensão 
-                
+
+        elif [[ -f "$selection" ]]; then
+
+            if [[ $selection == *$ext_file ]]; then # verifica a exxtensão
+
                 if (! dialog --title "Confirmação da seleção" --yesno "Diretório: $curdir\nArquivo  : $selection" 10 100 \
                             --yes-button "OK" \
                             --no-button "Voltar"); then
-                    
+
                     filename="$selection"
                     filepath="$curdir"
                     RET=0
@@ -140,7 +136,7 @@ function select_file() {
                 show_msgbox "ERRO!" "Arquivo incompativel.\n$selection\nVoce deve selecionar um arquivo do tipo $ext_file"
                 select_file "$title" "$curdir" "$ext_file" "$source"
             fi
- 
+
         else # Não foi possivel ler o arquivo
             show_msgbox "ERRO!" "ERRO!" "Caminho ou arquivo invalido.\nNão foi possivel acessa-lo:$selection"
             select_file "$title" "$curdir" "$ext_file" "$source"
@@ -151,12 +147,12 @@ function select_file() {
 }
 
 function select_path() {
-    
+
     local title=$1
     local path=$2
-    local source=${3:-"LOCAL"}  
+    local source=${3:-"LOCAL"}
     local content_dir=""
-    local cur_dir=""  
+    local cur_dir=""
 
     if [ $source = "REMOTE" ]; then
 
@@ -223,11 +219,11 @@ function show_info() {
 
 function show_description_file() {
 
-    dialog \ 
+    dialog \
         --title "Informações do arquivo" \
         --backtitle "$app_title" \
         --msgbox "Arquivo selecionado\nNome     : $1\nDiretorio: $2" \
-        0 0 
+        0 0
 }
 
 function show_description_sbc() {
@@ -288,7 +284,7 @@ function start_gdb() {
 
     if [ -f $init ] ; then
         if [ -f $program ] ; then
-            clear 
+            clear
             xtensa-esp32-elf-gdb -x $init $program
         else
             show_msgbox "ERRO!" "Não foi possivel localizar o arquivo:\n$program"
@@ -354,7 +350,7 @@ function create_project() {
 
         select_path "Seleção destino projeto" "$HOME"
         RET=$?
-                    
+
         if [ $RET -eq 0 ]; then
 
             cd $filepath
@@ -398,7 +394,7 @@ function build_all() {
 
     cd $project_path
 
-    make clean &> /dev/null  
+    make clean &> /dev/null
     make all &> /tmp/build.log &
 
     dialog --title "Compilando projeto" --tailbox /tmp/build.log 30 100
@@ -420,7 +416,7 @@ function esp32_flash() {
     if [[ -f "$serial" ]] ;then
 
         sudo chmod 777 $serial > /dev/null
-    fi 
+    fi
 
     make flash &> /tmp/flash.log &
 
@@ -446,7 +442,7 @@ function esp32_config_screen() {
     cd $project_path
 
     make menuconfig
-}   
+}
 
 function scan_host() {
 
@@ -516,7 +512,7 @@ function install_toolchain() {
                 --title "Versão do Toolchain" \
                 --radiolist "Escolha a versão do toolchain conforme o OS instalado" 0 0 0 \
                 "64" "Versão 64 bits" ON \
-                "32" "Versão 32 bits" OFF  
+                "32" "Versão 32 bits" OFF
             )
     local RET=$?
 
@@ -532,7 +528,7 @@ function install_toolchain() {
         toolchain_path_dest="$HOME/esp" #default
         select_path "Seleção destino toolchain" "$toolchain_path_dest"
         RET=$?
-                
+
         if [ $RET -eq 0 ]; then
 
             toolchain_path_dest=$filepath
@@ -541,10 +537,10 @@ function install_toolchain() {
 
             #cria diretorio onde que foi escolhido como destino do toolchian
             mkdir -p $toolchain_path_dest &&
-        
+
             #descompacta
             cd $toolchain_path_dest &&
-            
+
             tar -xzf "$HOME/Downloads/tc" &&
 
             # procura onde estão os binarios 
@@ -583,7 +579,7 @@ function clone_repositorio() {
 }
 
 function update_repositorio() {
-    
+
     local destino=$1
     local UPSTREAM=${2:-'@{u}'}   #[opcional] passar o branch  ex:release/v2.1"
 
@@ -609,7 +605,7 @@ function update_repositorio() {
 
         git submodule update
         git pull &> /tmp/git.log &> /tmp/git.log 30 100 &
-        dialog 
+        dialog
             --title "Atualização respositório-Local :$LOCAL\nRemote:$REMOTE\nBase  :$BASE" \
             --tailbox /tmp/git.log 30 100
       else
@@ -628,19 +624,19 @@ function manage_idf() {
 
     select_path "Repositório IDF" "$idf_path"
     local RET=$?
-        
+
     if [ $RET -eq 0 ]; then
 
         idf_path=$filepath
 
         if [[ -d "$idf_path" || $(mkdir $idf_path) -eq 0 ]]; then
 
-            { 
+            {
                 update_repositorio "$idf_path"
-                
+
             } || {
 
-                clone_repositorio "$idf_path_orin" "$idf_path" 
+                clone_repositorio "$idf_path_orin" "$idf_path"
 
             } || {
 
@@ -786,7 +782,7 @@ esp32_screen() {
                 3) esp32_config_screen ;;
         esac
     fi
-   
+
     return $RET
 }
 
@@ -832,15 +828,15 @@ function install_dialog() {
 
     local pacote=$(dpkg --get-selections | grep "dialog" )
 
-    if [ ! -n "$pacote" ] ; then 
-    
+    if [ ! -n "$pacote" ] ; then
+
         sudo apt-get install -y  dialog -qq > /dev/null
     fi
 
     pacote=$(dpkg --get-selections | grep "libncurses5-dev" )
 
-    if [ ! -n "$pacote" ] ; then 
-    
+    if [ ! -n "$pacote" ] ; then
+
         sudo apt-get libncurses5-dev -y  dialog -qq > /dev/null
     fi
 }
@@ -856,8 +852,8 @@ function init_script() {
     #permite acesso na porta serial
     if [[ -f "$serial" ]] ;then
 
-        sudo chmod 777 $serial > /dev/null 
-    fi 
+        sudo chmod 777 $serial > /dev/null
+    fi
 
     #inicializa com o menu principal
     show_screen main_screen
@@ -866,9 +862,9 @@ function init_script() {
 function event_process() {
     # super loop no menu ativo
 
-    while : ; do 
+    while : ; do
 
-        $activate_screen; 
+        $activate_screen;
         RET=$?
 
         # processa eventos com hanldes comunus
@@ -889,7 +885,7 @@ function event_process() {
 init_script
 
 
-if [ $cmd = "menuconfig" ]; then
+if [ $cmd = "config" ]; then
 
     event_process
 
@@ -898,11 +894,11 @@ elif  [ $cmd = "update" ]; then
 
     pip freeze --local > $ENV_PACKAGES && pip install -U -r $ENV_PACKAGES
 
-elif  [ $cmd = "sync" ]; then
+elif  [ $cmd = "deploy" ]; then
 
-    rsync -avz $GTRACKER_HOME jefferson@$DEPLOY_GTRACKER
+    rsync -avz $GTRACKER_HOME $user@$DEPLOY_GTRACKER
 
 else
-  echo "OPção $cmd invalida. Comandos disponivies: menuconfig | update | sync"
+  echo "Opção $cmd invalida. Comandos disponivies: config | update | deploy"
   exit -2
 fi
