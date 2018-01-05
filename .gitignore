@@ -3,7 +3,7 @@ GeoDjangoTutorial1.7-master
 geodjango-googlemaps.zip
 
 *.pyc
-GoodsTracker/tracker/__pycache__/
-GoodsTracker/GoodsTracker/__pycache__/
-GoodsTracker/core/rabbitmq/__pycache__/
-GoodsTracker/core/Domain/__pycache__/
+web/tracker/__pycache__/
+web/GoodsTracker/__pycache__/
+web/core/rabbitmq/__pycache__/
+web/core/Domain/__pycache__/
